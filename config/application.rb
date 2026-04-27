@@ -6,6 +6,9 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Ensure Devise extends ActiveRecord before routes (and devise-jwt) load the User model.
+require 'devise/orm/active_record'
+
 module Geneus
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.

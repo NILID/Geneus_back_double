@@ -1,4 +1,19 @@
 Rails.application.routes.draw do
+  devise_for :users, skip: :all
+
+  namespace :api do
+    namespace :v1 do
+      devise_scope :user do
+        post   'auth/login',    to: 'auth/sessions#create'
+        delete 'auth/logout',   to: 'auth/sessions#destroy'
+        post   'auth/register', to: 'auth/registrations#create'
+        post   'auth/password',       to: 'auth/passwords#create'
+        patch  'auth/password',       to: 'auth/passwords#update'
+      end
+      get 'auth/me', to: 'users#show'
+    end
+  end
+
   resources :people do
     member do
      # match 'versions/:version', :action => :versions_show, :as => 'version_of', :version => /\d+/

@@ -15,6 +15,9 @@ gem 'record_tag_helper'
 
 gem 'rack-cors'
 
+gem 'devise', '~> 4.9'
+gem 'devise-jwt', '~> 0.12'
+
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes

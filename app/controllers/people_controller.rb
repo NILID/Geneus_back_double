@@ -1,4 +1,7 @@
 class PeopleController < ApplicationController
+  before_action :authenticate_user!, only: %i[family_chart update_tree list]
+  skip_before_action :verify_authenticity_token, only: [:update_tree]
+
   before_action :set_person, only: %i[show edit update destroy versions update_father versions_show]
 
   def index

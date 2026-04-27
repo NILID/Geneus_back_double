@@ -54,7 +54,6 @@ RSpec.describe Person, type: :model do
 
     before do
       child.parentship.update!(father: father, mother: mother)
-      father.partnerships.create!(partner: mother)
     end
 
     it 'exports id, data and rels in family-chart format' do

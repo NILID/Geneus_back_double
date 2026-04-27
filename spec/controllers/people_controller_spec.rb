@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe PeopleController, type: :controller do
 
   let!(:person) { create(:person) }
+  let(:user) { create(:user) }
 
   describe "GET #index" do
     it "returns a success response" do
@@ -31,8 +32,14 @@ RSpec.describe PeopleController, type: :controller do
     let!(:child) { create(:person, name: 'Bob Doe', gender: 'male') }
 
     before do
+      sign_in user
       child.parentship.update!(father: father, mother: mother)
-      father.partnerships.create!(partner: mother)
+    end
+
+    it "rejects unauthenticated requests" do
+      sign_out user
+      post :update_tree, params: { nodes: [] }
+      expect(response).to have_http_status(:unauthorized)
     end
 
     it "persists chart data and returns updated nodes" do
@@ -71,8 +78,14 @@ RSpec.describe PeopleController, type: :controller do
     let!(:child) { create(:person, name: 'Bob Doe', gender: 'male') }
 
     before do
+      sign_in user
       child.parentship.update!(father: father, mother: mother)
-      father.partnerships.create!(partner: mother)
+    end
+
+    it "rejects unauthenticated requests" do
+      sign_out user
+      get :family_chart, params: { format: :json }
+      expect(response).to have_http_status(:unauthorized)
     end
 
     it "returns family-chart compatible json nodes" do

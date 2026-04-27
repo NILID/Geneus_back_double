@@ -9,7 +9,6 @@ RSpec.describe FamilyChart::RelationshipIndex do
 
   before do
     child.parentship.update!(father: father, mother: mother)
-    father.partnerships.create!(partner: mother)
   end
 
   describe '#rels_for' do
