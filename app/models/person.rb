@@ -10,8 +10,8 @@ class Person < ApplicationRecord
   has_many :defacto_partners, through: :partnerships, :source => :partner#, :finder_sql =>
  
   has_one :parentship, dependent: :destroy
-  has_one :mother, through: :parentship, source: :father
-  has_one :father, through: :parentship, source: :mother
+  has_one :mother, through: :parentship, source: :mother
+  has_one :father, through: :parentship, source: :father
 
   has_many :children_of_father, class_name: 'Parentship', :foreign_key => 'father_id'
   has_many :children_of_mother, class_name: 'Parentship', :foreign_key => 'mother_id'
@@ -140,10 +140,12 @@ class Person < ApplicationRecord
       'first name' => first_name,
       'last name' => last_name,
       'name' => name,
+      'avatar' => '',
       'gender' => family_chart_gender,
       'birthday' => date_of_birth&.iso8601,
       'death' => date_of_death&.iso8601
     }.compact
+#      'avatar' => ['http://localhost:3001/', avatar&.url.to_s].join || '',
   end
 
   def family_chart_gender

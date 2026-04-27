@@ -13,7 +13,7 @@ class PeopleController < ApplicationController
   end
 
   def family_chart
-    people = Person.includes(:parentship, :partnerships, :partners)
+    people = Person.includes(:partners, partnerships: :partner, parentship: [:father, :mother])
     serializer = FamilyChartSerializer.new(people)
 
     if ActiveModel::Type::Boolean.new.cast(params[:with_connectors])
