@@ -4,7 +4,11 @@ class FamilyChartSerializer
   end
 
   def nodes
-    @nodes ||= @people.map(&:family_chart_node)
+    @nodes ||= begin
+      people = @people.is_a?(ActiveRecord::Relation) ? @people.to_a : Array(@people)
+      index = FamilyChart::RelationshipIndex.new(people)
+      people.map { |person| person.family_chart_node(relationship_index: index) }
+    end
   end
 
   # Optional edge list useful for debugging integrations.

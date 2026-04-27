@@ -13,7 +13,7 @@ class PeopleController < ApplicationController
   end
 
   def family_chart
-    people = Person.includes(:partners, partnerships: :partner, parentship: [:father, :mother])
+    people = Person.all
     serializer = FamilyChartSerializer.new(people)
 
     if ActiveModel::Type::Boolean.new.cast(params[:with_connectors])
@@ -30,7 +30,7 @@ class PeopleController < ApplicationController
       removed_ids: payload[:removed_ids]
     ).call
 
-    people = Person.includes(:parentship, :partnerships, :partners)
+    people = Person.all
     render json: { ok: true, nodes: FamilyChartSerializer.new(people).nodes }
   rescue FamilyChartTreeSync::Error => e
     render json: { ok: false, errors: [e.message] }, status: :unprocessable_entity

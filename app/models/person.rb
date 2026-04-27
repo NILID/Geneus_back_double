@@ -112,15 +112,17 @@ class Person < ApplicationRecord
     chart_id.presence || id.to_s
   end
 
-  def family_chart_node
+  def family_chart_node(relationship_index: nil)
     {
       id: chart_external_id,
       data: family_chart_data,
-      rels: family_chart_relationships
+      rels: family_chart_relationships(relationship_index: relationship_index)
     }
   end
 
-  def family_chart_relationships
+  def family_chart_relationships(relationship_index: nil)
+    return relationship_index.rels_for(self) if relationship_index
+
     relationships = {}
 
     parent_ids = parents.map(&:chart_external_id)
