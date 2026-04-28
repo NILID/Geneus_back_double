@@ -1,0 +1,6 @@
+.git/
+doc/
+*.log
+*.pid
+tmp/
+log/
