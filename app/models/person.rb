@@ -23,6 +23,16 @@ class Person < ApplicationRecord
   scope :men,   -> { where(gender: 'male') }
   scope :women, -> { where(gender: 'female') }
 
+  # Resolves numeric id first, then +chart_id+ (for /api/v1/people/:id from the SPA).
+  def self.find_for_api!(param)
+    key = param.to_s
+    if key.match?(/\A\d+\z/)
+      find(key)
+    else
+      find_by!(chart_id: key)
+    end
+  end
+
   # named_scope :parents, { :include => [ :mother, :father ] }
 
   validates_length_of :name,

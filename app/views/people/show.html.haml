@@ -13,8 +13,6 @@
           = link_to 'Current version', @person,           class: 'dropdown-item'
           = link_to 'View history', [:versions, @person], class: 'dropdown-item'
 
-#tree.pb-3= render partial: 'tree', locals: { person: @person }
-
 .container.mt-3
   .row
     .col-8
@@ -34,10 +32,6 @@
       = image_tag avatar_or_default(@person), class: 'img-fluid img-thumbnail mb-2'
       %h2.h3 Information
       %table.table.table-sm
-        %tr
-          %th Gender:
-          %td= @person.gender
-
         - if @person.date_of_birth
           %tr
             %th Birth:
@@ -52,20 +46,3 @@
               = @person.date_of_death
               - if @person.location_of_death?
                 (#{@person.location_of_death})
-
-        - if @father
-          %tr
-            %th Father:
-            %td= link_to @father.name, @father
-
-        - if @mother
-          %tr
-            %th Mother:
-            %td= link_to @mother.name, @mother
-        %tr
-          %th Partners:
-          %td= render partial: 'people/partnerships', locals: { person: @person }
-        %tr
-          %th Children:
-          %td= render partial: 'children', locals: { person: @person }
-

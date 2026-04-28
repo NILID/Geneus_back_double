@@ -49,8 +49,6 @@ class PeopleController < ApplicationController
 
   def show
     @person = @person
-    @father = @person.father
-    @mother = @person.mother
   end
 
   def new
