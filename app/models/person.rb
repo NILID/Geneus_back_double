@@ -7,14 +7,10 @@ class Person < ApplicationRecord
 
   has_many :partnerships, :dependent => :destroy
   has_many :partners, through: :partnerships, :source => :partner
-  has_many :defacto_partners, through: :partnerships, :source => :partner#, :finder_sql =>
  
   has_one :parentship, dependent: :destroy
   has_one :mother, through: :parentship, source: :mother
   has_one :father, through: :parentship, source: :father
-
-  has_many :children_of_father, class_name: 'Parentship', :foreign_key => 'father_id'
-  has_many :children_of_mother, class_name: 'Parentship', :foreign_key => 'mother_id'
 
   has_many :notes, :dependent => :destroy
 
