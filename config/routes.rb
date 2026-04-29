@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users, skip: :all
 
+  if Rails.env.development?
+    get '/.well-known/appspecific/com.chrome.devtools.json', to: proc { [200, {}, ['']] }
+  end
+
   namespace :api do
     namespace :v1 do
       devise_scope :user do
