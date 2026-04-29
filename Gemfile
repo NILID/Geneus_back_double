@@ -53,11 +53,6 @@ gem 'paper_trail'
 gem 'validates_timeliness'
 gem 'haml-rails'
 
-group :heroku do
-  gem 'pg'
-  gem 'rails_12factor'
-end
-
 group :development, :test do
   gem 'sqlite3', '~> 1.4'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -75,7 +70,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 
-  gem 'rails_real_favicon'
   gem 'bullet'
 end
 

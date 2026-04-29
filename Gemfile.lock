@@ -147,7 +147,6 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (8.0.0)
       railties (>= 3.2.16)
-    json (2.19.3)
     jwt (3.1.2)
       base64
     libv8 (3.16.14.19.1-x86_64-linux)
@@ -186,7 +185,6 @@ GEM
     paper_trail (16.0.0)
       activerecord (>= 6.1)
       request_store (~> 1.4)
-    pg (1.6.3-x86_64-linux)
     public_suffix (6.0.2)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -222,15 +220,6 @@ GEM
     rails-html-sanitizer (1.7.0)
       loofah (~> 2.25)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
-    rails_12factor (0.0.3)
-      rails_serve_static_assets
-      rails_stdout_logging
-    rails_real_favicon (0.1.1)
-      json (>= 1.7, < 3)
-      rails
-      rubyzip (~> 2)
-    rails_serve_static_assets (0.0.5)
-    rails_stdout_logging (0.0.5)
     railties (6.1.7.10)
       actionpack (= 6.1.7.10)
       activesupport (= 6.1.7.10)
@@ -354,13 +343,10 @@ DEPENDENCIES
   jquery-ui-rails
   listen (>= 3.0.5, < 3.2)
   paper_trail
-  pg
   puma (~> 4.3)
   rack-cors
   rails (~> 6.1)
   rails-controller-testing
-  rails_12factor
-  rails_real_favicon
   rspec-rails
   sassc-rails
   selenium-webdriver
