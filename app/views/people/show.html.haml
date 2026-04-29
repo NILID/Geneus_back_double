@@ -8,7 +8,6 @@
         %a.btn.btn-dark.dropdown-toggle{ href: '#', role: 'button', data: { toggle: "dropdown"}, aria: { haspopup: "true", expanded: "false" } }
           = fa_icon 'cog'
         .dropdown-menu
-          = link_to 'Edit', [:edit, @person],             class: 'dropdown-item'
           .dropdown-divider
           = link_to 'Current version', @person,           class: 'dropdown-item'
           = link_to 'View history', [:versions, @person], class: 'dropdown-item'

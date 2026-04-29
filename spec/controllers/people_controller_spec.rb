@@ -110,13 +110,6 @@ RSpec.describe PeopleController, type: :controller do
     end
   end
 
-  describe "GET #edit" do
-    it "returns a success response" do
-      get :edit, params: {id: person}
-      expect(response).to be_successful
-    end
-  end
-
   describe "POST #create" do
     context "with valid params" do
       it "creates a new Person" do
@@ -134,32 +127,6 @@ RSpec.describe PeopleController, type: :controller do
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'new' template)" do
         post :create, params: {person: attributes_for(:person, gender: nil)}
-        expect(response).to be_successful
-      end
-    end
-  end
-
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
-
-      it "updates the requested person" do
-        put :update, params: {id: person.to_param, person: new_attributes}
-        person.reload
-        skip("Add assertions for updated state")
-      end
-
-      it "redirects to the person" do
-        put :update, params: {id: person.to_param, person: attributes_for(:person)}
-        expect(response).to redirect_to(person)
-      end
-    end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        put :update, params: {id: person.to_param, person: attributes_for(:person, gender: nil)}
         expect(response).to be_successful
       end
     end

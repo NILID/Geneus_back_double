@@ -68,21 +68,6 @@ class PeopleController < ApplicationController
     end
   end
 
-  def edit
-  end
-
-  def update
-    respond_to do |format|
-      if @person.update(person_params)
-        format.html { redirect_to(@person, :notice => 'Person was successfully updated.') }
-        format.json  { render :json => @person, :status => :ok }
-      else
-        format.html { render :edit }
-        format.json { render :json => @person.errors.to_a, :status => :unprocessable_entity }
-      end
-    end
-  end
-
   def destroy
     @person.destroy
 

@@ -11,11 +11,11 @@ Rails.application.routes.draw do
         patch  'auth/password',       to: 'auth/passwords#update'
       end
       get 'auth/me', to: 'users#show'
-      resources :people, only: [:show]
+      resources :people, only: %i[show update]
     end
   end
 
-  resources :people do
+  resources :people, except: %i[edit update] do
     member do
      # match 'versions/:version', :action => :versions_show, :as => 'version_of', :version => /\d+/
       get :versions

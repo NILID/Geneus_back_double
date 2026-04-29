@@ -1,5 +1,7 @@
 class Person < ApplicationRecord
   include Tokenable
+  include Rails.application.routes.url_helpers
+
   after_create :create_parentship
 
   has_one_attached :avatar
@@ -144,16 +146,19 @@ class Person < ApplicationRecord
 
   # === Данные для графа семьи — вынести в отдельный класс в будущем ===
   def family_chart_data
+    if Rails.env.development?
+      Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+    end
+
     {
       'first name' => first_name,
       'last name' => last_name,
       'name' => name,
-      'avatar' => '',
+      'avatar' => avatar.attached? ? Rails.application.routes.url_helpers.url_for(avatar) : nil,
       'gender' => family_chart_gender,
       'birthday' => date_of_birth&.iso8601,
       'death' => date_of_death&.iso8601
     }.compact
-#      'avatar' => ['http://localhost:3001/', avatar&.url.to_s].join || '',
   end
 
   def family_chart_gender
