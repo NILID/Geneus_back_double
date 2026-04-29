@@ -11,8 +11,6 @@ gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
 gem 'sassc-rails'
 
-gem 'record_tag_helper'
-
 gem 'rack-cors'
 
 gem 'devise', '~> 4.9'
