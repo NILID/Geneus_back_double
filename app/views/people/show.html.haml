@@ -16,9 +16,6 @@
   .row
     .col-8
       .row
-        .col-12
-          %h2.h3 Bio
-          %p= show_or_empty(@person.bio)
         .col-12.my-3
           %h2.h3
             Notes
@@ -26,22 +23,3 @@
         .col-12
           %table.table.table-hover
             = render @person.notes
-
-    .col-4
-      = image_tag avatar_or_default(@person), class: 'img-fluid img-thumbnail mb-2'
-      %h2.h3 Information
-      %table.table.table-sm
-        - if @person.date_of_birth
-          %tr
-            %th Birth:
-            %td
-              = @person.date_of_birth
-              - if @person.location_of_birth?
-                (#{@person.location_of_birth})
-        - if @person.date_of_death
-          %tr
-            %th Death:
-            %td
-              = @person.date_of_death
-              - if @person.location_of_death?
-                (#{@person.location_of_death})
