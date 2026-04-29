@@ -3,8 +3,9 @@
 module Api
   module V1
     class PersonSerializer
-      def initialize(person)
+      def initialize(person, request: nil)
         @person = person
+        @request = request
       end
 
       def as_json
@@ -21,6 +22,7 @@ module Api
           date_of_death: @person.date_of_death&.iso8601,
           location_of_birth: @person.location_of_birth,
           location_of_death: @person.location_of_death,
+          avatar_url: avatar_url,
           parents: @person.parents.map { |p| summary(p) },
           partners: @person.partners.distinct.map { |p| summary(p) },
           children: @person.children.map { |p| summary(p) }
@@ -28,6 +30,15 @@ module Api
       end
 
       private
+
+      def avatar_url
+        return nil if @request.blank? || !@person.avatar.attached?
+
+        @request.base_url + Rails.application.routes.url_helpers.rails_blob_path(
+          @person.avatar,
+          only_path: true
+        )
+      end
 
       def summary(person)
         {

@@ -7,7 +7,7 @@ module Api
 
       def show
         person = Person.find_for_api!(params[:id])
-        render json: { person: Api::V1::PersonSerializer.new(person).as_json }
+        render json: { person: Api::V1::PersonSerializer.new(person, request: request).as_json }
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Person not found' }, status: :not_found
       end
@@ -15,7 +15,7 @@ module Api
       def update
         person = Person.find_for_api!(params[:id])
         if person.update(api_person_attributes)
-          render json: { person: Api::V1::PersonSerializer.new(person).as_json }
+          render json: { person: Api::V1::PersonSerializer.new(person, request: request).as_json }
         else
           render json: { errors: person.errors.full_messages }, status: :unprocessable_entity
         end
@@ -34,11 +34,15 @@ module Api
           :date_of_death,
           :location_of_birth,
           :location_of_death,
+          :avatar,
           { parentship_attributes: %i[id father_id mother_id] },
           partner_ids: []
         )
         h = permitted.to_unsafe_h
         %w[date_of_birth date_of_death].each do |key|
+          h[key] = nil if h[key].blank?
+        end
+        %w[bio location_of_birth location_of_death].each do |key|
           h[key] = nil if h[key].blank?
         end
         h

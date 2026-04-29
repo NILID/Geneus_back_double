@@ -22,6 +22,7 @@ RSpec.describe 'Api::V1::People', type: :request do
       json = JSON.parse(response.body)
       expect(json['person']['id']).to eq(person.id)
       expect(json['person']['name']).to eq('Api Person')
+      expect(json['person']['avatar_url']).to be_nil
     end
 
     it 'resolves by chart_id when not all-digits' do
@@ -90,6 +91,29 @@ RSpec.describe 'Api::V1::People', type: :request do
             headers: { 'Authorization' => "Bearer #{bearer_token}" },
             as: :json
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'attaches avatar via multipart' do
+      png = Rack::Test::UploadedFile.new(
+        Rails.root.join('spec/fixtures/files/1x1.png'),
+        'image/png'
+      )
+      patch api_v1_person_path(person.id),
+            params: {
+              person: {
+                name: person.name,
+                gender: person.gender,
+                bio: person.bio,
+                avatar: png
+              }
+            },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+      expect(response).to have_http_status(:ok)
+      person.reload
+      expect(person.avatar.attached?).to be true
+      json = JSON.parse(response.body)
+      expect(json['person']['avatar_url']).to be_present
     end
   end
 end
