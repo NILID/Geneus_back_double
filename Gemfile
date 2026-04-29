@@ -52,7 +52,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'paper_trail'
 gem 'validates_timeliness'
 gem 'haml-rails'
-gem 'rails-jquery-autocomplete'
 
 group :heroku do
   gem 'pg'
