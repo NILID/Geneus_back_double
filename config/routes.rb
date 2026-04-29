@@ -35,12 +35,6 @@ Rails.application.routes.draw do
     resources :children, only: %i[create destroy]
     resources :notes
   end
-  resources :partnerships, only: %i[create destroy]
-  resources :parentships,  only: %i[update destroy]
 
   root to: 'people#index'
-
-  # XXX HACK this shouldn't be necessary:
-  # match '/people/:id/update_father', :controller => :people, :action => :update_father
-  # match '/people/:id/update_mother', :controller => :people, :action => :update_mother
 end
