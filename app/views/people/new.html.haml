@@ -1,9 +1,0 @@
-.container
-  .row
-    .col
-      %h2 New Person
-      = bootstrap_form_with(model: @person, local: true) do |f|
-        = f.text_field :name
-        = f.select :gender, [['Male', 'male'], ['Female', 'female']], { prompt: '- Select a gender -' }
-        = f.file_field :avatar
-        = f.submit class: 'btn btn-dark'

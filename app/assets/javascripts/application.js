@@ -15,5 +15,4 @@
 //= require jquery-ui
 //= require rails-ujs
 //= require activestorage
-//= require font_awesome5
 //= require_tree .

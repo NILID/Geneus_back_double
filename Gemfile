@@ -33,8 +33,6 @@ gem 'dotenv-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
-gem 'font_awesome5_rails'
-
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 5'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks

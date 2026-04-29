@@ -6,7 +6,7 @@
     .col-6.text-right
       .dropdown
         %a.btn.btn-dark.dropdown-toggle{ href: '#', role: 'button', data: { toggle: "dropdown"}, aria: { haspopup: "true", expanded: "false" } }
-          = fa_icon 'cog'
+          Menu
         .dropdown-menu
           .dropdown-divider
           = link_to 'Current version', @person,           class: 'dropdown-item'
@@ -22,7 +22,7 @@
         .col-12.my-3
           %h2.h3
             Notes
-            %small= link_to fa_icon(:plus), [:new, @person, :note], class: 'btn btn-dark btn-sm'
+            %small= link_to '+', [:new, @person, :note], class: 'btn btn-dark btn-sm'
         .col-12
           %table.table.table-hover
             = render @person.notes

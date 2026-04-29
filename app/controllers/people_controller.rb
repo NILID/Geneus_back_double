@@ -51,23 +51,6 @@ class PeopleController < ApplicationController
     @person = @person
   end
 
-  def new
-    @person = Person.new
-  end
-
-  def create
-    @person = Person.new(person_params)
-    respond_to do |format|
-      if @person.save
-        format.json { render :json => @person, :status => :ok }
-        format.html { redirect_to @person }
-      else
-        format.json { render :json => @person.errors.to_a, :status => :unprocessable_entity }
-        format.html { render :action => "new" }
-      end
-    end
-  end
-
   def destroy
     @person.destroy
 
@@ -124,20 +107,5 @@ class PeopleController < ApplicationController
 
     def set_person
       @person = Person.find(params[:id])
-    end
-
-    def person_params
-      params.require(:person).permit(
-        :name,
-        :gender,
-        :bio,
-        :date_of_birth,
-        :date_of_death,
-        :location_of_birth,
-        :location_of_death,
-        :avatar,
-        { parentship_attributes: [:id, :father_id, :mother_id] },
-        partner_ids: []
-      )
     end
 end

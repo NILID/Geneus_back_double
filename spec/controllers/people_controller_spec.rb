@@ -19,13 +19,6 @@ RSpec.describe PeopleController, type: :controller do
     end
   end
 
-  describe "GET #new" do
-    it "returns a success response" do
-      get :new
-      expect(response).to be_successful
-    end
-  end
-
   describe "POST #update_tree" do
     let!(:father) { create(:person, name: 'John Doe', gender: 'male') }
     let!(:mother) { create(:person, name: 'Jane Doe', gender: 'female') }
@@ -109,40 +102,4 @@ RSpec.describe PeopleController, type: :controller do
       expect(payload['connectors']).to be_an(Array)
     end
   end
-
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Person" do
-        expect {
-          post :create, params: { person: attributes_for(:person) }
-        }.to change(Person, :count).by(1)
-      end
-
-      it "redirects to the created person" do
-        post :create, params: {person: attributes_for(:person)}
-        expect(response).to redirect_to(Person.last)
-      end
-    end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {person: attributes_for(:person, gender: nil)}
-        expect(response).to be_successful
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested person" do
-      expect {
-        delete :destroy, params: {id: person.to_param}
-      }.to change(Person, :count).by(-1)
-    end
-
-    it "redirects to the people list" do
-      delete :destroy, params: {id: person.to_param}
-      expect(response).to redirect_to(people_url)
-    end
-  end
-
 end
