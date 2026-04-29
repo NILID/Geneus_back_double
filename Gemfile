@@ -54,7 +54,6 @@ gem 'jbuilder', '~> 2.7'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'paper_trail'
-gem 'bootstrap_form'
 gem 'validates_timeliness'
 gem 'haml-rails'
 gem 'rails-jquery-autocomplete'
