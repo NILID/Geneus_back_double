@@ -1,10 +1,5 @@
 .container-fluid
   .row
     .col
-      %h2
-        Listing People
-        %small.text-muted= pluralize @people.size, 'person'
-  .row
-    .col
       .card-columns
         = render partial: 'person_card', collection: @people

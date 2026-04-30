@@ -32,7 +32,6 @@ Rails.application.routes.draw do
       get  :family_chart
       post :update_tree
     end
-    resources :children, only: %i[create destroy]
     resources :notes
   end
 
