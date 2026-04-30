@@ -13,7 +13,6 @@ module Api
           id: @person.id,
           chart_id: @person.chart_id,
           chart_external_id: @person.chart_external_id,
-          name: @person.name,
           first_name: @person.first_name,
           last_name: @person.last_name,
           gender: @person.gender,
@@ -44,7 +43,8 @@ module Api
         {
           id: person.id,
           chart_external_id: person.chart_external_id,
-          name: person.name
+          first_name: person.first_name,
+          last_name: person.last_name
         }
       end
     end

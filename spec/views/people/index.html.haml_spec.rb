@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "people/index", type: :view do
   before(:each) do
-    @people = create_list(:person, 2, name: 'Ivan')
+    @people = create_list(:person, 2, first_name: 'Ivan', last_name: nil)
   end
 
   it "renders a list of people" do

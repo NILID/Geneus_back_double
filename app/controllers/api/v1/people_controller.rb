@@ -27,7 +27,8 @@ module Api
 
       def api_person_attributes
         permitted = params.require(:person).permit(
-          :name,
+          :first_name,
+          :last_name,
           :gender,
           :bio,
           :date_of_birth,
@@ -42,7 +43,7 @@ module Api
         %w[date_of_birth date_of_death].each do |key|
           h[key] = nil if h[key].blank?
         end
-        %w[bio location_of_birth location_of_death].each do |key|
+        %w[bio location_of_birth location_of_death last_name].each do |key|
           h[key] = nil if h[key].blank?
         end
         h

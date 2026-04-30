@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe FamilyChart::RelationshipIndex do
-  let!(:father) { create(:person, name: 'Father Doe', gender: 'male') }
-  let!(:mother) { create(:person, name: 'Mother Doe', gender: 'female') }
-  let!(:child) { create(:person, name: 'Child Doe', gender: 'male') }
+  let!(:father) { create(:person, first_name: 'Father', last_name: 'Doe', gender: 'male') }
+  let!(:mother) { create(:person, first_name: 'Mother', last_name: 'Doe', gender: 'female') }
+  let!(:child) { create(:person, first_name: 'Child', last_name: 'Doe', gender: 'male') }
 
   before do
     child.parentship.update!(father: father, mother: mother)

@@ -31,10 +31,14 @@ class Person < ApplicationRecord
     end
   end
 
+  # Tokenable: search / token-create use +first_name+ instead of removed +name+.
+  def self.get_attr
+    :first_name
+  end
+
   # named_scope :parents, { :include => [ :mother, :father ] }
 
-  validates_length_of :name,
-    minimum: 1
+  validates :first_name, presence: true, length: { minimum: 1 }
   validates :chart_id, uniqueness: { allow_blank: true }
   validates_inclusion_of :gender,
     in: %w( male female ),
@@ -153,7 +157,6 @@ class Person < ApplicationRecord
     {
       'first name' => first_name,
       'last name' => last_name,
-      'name' => name,
       'avatar' => avatar.attached? ? Rails.application.routes.url_helpers.url_for(avatar) : nil,
       'gender' => family_chart_gender,
       'birthday' => date_of_birth&.iso8601,
@@ -165,13 +168,8 @@ class Person < ApplicationRecord
     gender == 'female' ? 'F' : 'M'
   end
 
-  def first_name
-    name.to_s.strip.split.first
-  end
-
-  def last_name
-    parts = name.to_s.strip.split
-    parts.length > 1 ? parts[1..].join(' ') : nil
+  def full_name
+    [first_name, last_name].compact_blank.join(' ')
   end
 
   # === Генерация JSON для дерева — ВАЖНО: вынести в отдельный сервис! ===

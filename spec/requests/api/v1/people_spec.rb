@@ -4,7 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'Api::V1::People', type: :request do
   let(:user) { create(:user) }
-  let!(:person) { create(:person, name: 'Api Person', gender: 'male', chart_id: 'chart-xyz') }
+  let!(:person) do
+    create(:person, first_name: 'Api', last_name: 'Person', gender: 'male', chart_id: 'chart-xyz')
+  end
 
   def bearer_token
     Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
@@ -21,7 +23,8 @@ RSpec.describe 'Api::V1::People', type: :request do
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json['person']['id']).to eq(person.id)
-      expect(json['person']['name']).to eq('Api Person')
+      expect(json['person']['first_name']).to eq('Api')
+      expect(json['person']['last_name']).to eq('Person')
       expect(json['person']['avatar_url']).to be_nil
     end
 
@@ -41,7 +44,7 @@ RSpec.describe 'Api::V1::People', type: :request do
 
   describe 'PATCH /api/v1/people/:id' do
     it 'returns 401 without token' do
-      patch api_v1_person_path(person.id), params: { person: { name: 'Updated' } }, as: :json
+      patch api_v1_person_path(person.id), params: { person: { first_name: 'Updated' } }, as: :json
       expect(response).to have_http_status(:unauthorized)
     end
 
@@ -49,7 +52,8 @@ RSpec.describe 'Api::V1::People', type: :request do
       patch api_v1_person_path('chart-xyz'),
             params: {
               person: {
-                name: 'Updated Name',
+                first_name: 'Updated',
+                last_name: 'Name',
                 gender: 'male',
                 bio: 'New bio',
                 date_of_birth: '1990-05-15',
@@ -63,19 +67,21 @@ RSpec.describe 'Api::V1::People', type: :request do
 
       expect(response).to have_http_status(:ok)
       person.reload
-      expect(person.name).to eq('Updated Name')
+      expect(person.first_name).to eq('Updated')
+      expect(person.last_name).to eq('Name')
       expect(person.bio).to eq('New bio')
       expect(person.date_of_birth).to eq(Date.new(1990, 5, 15))
       expect(person.date_of_death).to be_nil
       expect(person.location_of_birth).to eq('Moscow')
 
       json = JSON.parse(response.body)
-      expect(json['person']['name']).to eq('Updated Name')
+      expect(json['person']['first_name']).to eq('Updated')
+      expect(json['person']['last_name']).to eq('Name')
     end
 
     it 'returns 422 on validation error' do
       patch api_v1_person_path(person.id),
-            params: { person: { name: '', gender: 'male' } },
+            params: { person: { first_name: '', gender: 'male' } },
             headers: { 'Authorization' => "Bearer #{bearer_token}" },
             as: :json
 
@@ -87,7 +93,7 @@ RSpec.describe 'Api::V1::People', type: :request do
     it 'returns 404 for unknown id' do
       missing_id = (Person.maximum(:id) || 0) + 99_999
       patch api_v1_person_path(missing_id),
-            params: { person: { name: 'Nope' } },
+            params: { person: { first_name: 'Nope' } },
             headers: { 'Authorization' => "Bearer #{bearer_token}" },
             as: :json
       expect(response).to have_http_status(:not_found)
@@ -101,7 +107,8 @@ RSpec.describe 'Api::V1::People', type: :request do
       patch api_v1_person_path(person.id),
             params: {
               person: {
-                name: person.name,
+                first_name: person.first_name,
+                last_name: person.last_name,
                 gender: person.gender,
                 bio: person.bio,
                 avatar: png

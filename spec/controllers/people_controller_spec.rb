@@ -20,9 +20,9 @@ RSpec.describe PeopleController, type: :controller do
   end
 
   describe "POST #update_tree" do
-    let!(:father) { create(:person, name: 'John Doe', gender: 'male') }
-    let!(:mother) { create(:person, name: 'Jane Doe', gender: 'female') }
-    let!(:child) { create(:person, name: 'Bob Doe', gender: 'male') }
+    let!(:father) { create(:person, first_name: 'John', last_name: 'Doe', gender: 'male') }
+    let!(:mother) { create(:person, first_name: 'Jane', last_name: 'Doe', gender: 'female') }
+    let!(:child) { create(:person, first_name: 'Bob', last_name: 'Doe', gender: 'male') }
 
     before do
       sign_in user
@@ -61,14 +61,16 @@ RSpec.describe PeopleController, type: :controller do
       expect(body['ok']).to eq(true)
       expect(body['nodes']).to be_an(Array)
       father_node = body['nodes'].find { |n| n['id'] == father.id.to_s }
-      expect(father_node['data']['name']).to eq('John Doe Updated')
+      expect(father_node['data']['first name']).to eq('John')
+      expect(father_node['data']['last name']).to eq('Doe Updated')
+      expect(father_node['data']).not_to have_key('name')
     end
   end
 
   describe "GET #family_chart" do
-    let!(:father) { create(:person, name: 'John Doe', gender: 'male') }
-    let!(:mother) { create(:person, name: 'Jane Doe', gender: 'female') }
-    let!(:child) { create(:person, name: 'Bob Doe', gender: 'male') }
+    let!(:father) { create(:person, first_name: 'John', last_name: 'Doe', gender: 'male') }
+    let!(:mother) { create(:person, first_name: 'Jane', last_name: 'Doe', gender: 'female') }
+    let!(:child) { create(:person, first_name: 'Bob', last_name: 'Doe', gender: 'male') }
 
     before do
       sign_in user

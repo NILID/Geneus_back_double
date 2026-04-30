@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :person do
-    name { 'Ivan' }
+    first_name { 'Ivan' }
+    last_name { 'Petrov' }
     bio  { 'About Ivan'}
     date_of_birth { DateTime.now - 20.years }
     date_of_death { DateTime.now - 2.years }

@@ -214,16 +214,24 @@ class FamilyChartTreeSync
 
     fn = data['first name'].to_s.strip
     ln = data['last name'].to_s.strip
-    combined = [fn, ln].reject(&:blank?).join(' ').presence
-    name = combined.presence || data['name'].presence || 'Unknown'
 
-    {
-      name: name,
+    if fn.blank? && ln.blank? && data['name'].present?
+      parts = data['name'].to_s.strip.split
+      fn = parts.first.to_s
+      ln = parts.length > 1 ? parts[1..].join(' ') : ''
+    end
+
+    fn = 'Unknown' if fn.blank?
+
+    attrs = {
+      first_name: fn,
       gender: gender,
       date_of_birth: parse_date(data['birthday']),
       date_of_death: parse_date(data['death']),
       bio: data['bio'].presence
     }.compact
+    attrs[:last_name] = ln.presence
+    attrs
   end
 
   def parse_date(value)

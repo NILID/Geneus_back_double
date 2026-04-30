@@ -41,16 +41,16 @@ RSpec.describe Person, type: :model do
     expect(person.errors[:date_of_death]).not_to be_empty
   end
 
-  it 'name must have minimum 1 symbol' do
-    person.name = ''
+  it 'first_name must have minimum 1 symbol' do
+    person.first_name = ''
     expect(person.valid?).to be false
-    expect(person.errors[:name]).not_to be_empty
+    expect(person.errors[:first_name]).not_to be_empty
   end
 
   describe '#family_chart_node' do
-    let!(:father) { create(:person, name: 'Father Doe', gender: 'male') }
-    let!(:mother) { create(:person, name: 'Mother Doe', gender: 'female') }
-    let!(:child) { create(:person, name: 'Child Doe', gender: 'male') }
+    let!(:father) { create(:person, first_name: 'Father', last_name: 'Doe', gender: 'male') }
+    let!(:mother) { create(:person, first_name: 'Mother', last_name: 'Doe', gender: 'female') }
+    let!(:child) { create(:person, first_name: 'Child', last_name: 'Doe', gender: 'male') }
 
     before do
       child.parentship.update!(father: father, mother: mother)

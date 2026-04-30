@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe FamilyChartTreeSync do
   describe '#call' do
-    let!(:father) { create(:person, name: 'John Doe', gender: 'male') }
-    let!(:mother) { create(:person, name: 'Jane Doe', gender: 'female') }
-    let!(:child) { create(:person, name: 'Bob Doe', gender: 'male') }
+    let!(:father) { create(:person, first_name: 'John', last_name: 'Doe', gender: 'male') }
+    let!(:mother) { create(:person, first_name: 'Jane', last_name: 'Doe', gender: 'female') }
+    let!(:child) { create(:person, first_name: 'Bob', last_name: 'Doe', gender: 'male') }
 
     before do
       child.parentship.update!(father: father, mother: mother)
@@ -32,7 +32,9 @@ RSpec.describe FamilyChartTreeSync do
 
       described_class.new(nodes: nodes, removed_ids: []).call
 
-      expect(father.reload.name).to eq('John Doe Updated')
+      father.reload
+      expect(father.first_name).to eq('John')
+      expect(father.last_name).to eq('Doe Updated')
     end
 
     it 'creates a new person with chart_id for UUID ids' do
@@ -64,7 +66,9 @@ RSpec.describe FamilyChartTreeSync do
         described_class.new(nodes: nodes, removed_ids: []).call
       }.to change(Person, :count).by(1)
 
-      expect(Person.find_by(chart_id: uuid).name).to eq('New Person')
+      created = Person.find_by(chart_id: uuid)
+      expect(created.first_name).to eq('New')
+      expect(created.last_name).to eq('Person')
     end
 
     it 'removes a person when listed in removed_ids' do
