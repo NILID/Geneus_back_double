@@ -3,6 +3,9 @@
 class GalleryPhoto < ApplicationRecord
   belongs_to :user
 
+  has_many :gallery_photo_person_tags, dependent: :destroy
+  has_many :tagged_people, through: :gallery_photo_person_tags, source: :person
+
   has_one_attached :image
 
   ALLOWED_TYPES = %w[image/jpeg image/png image/webp image/gif].freeze

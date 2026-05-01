@@ -15,11 +15,25 @@ module Api
           uploaded_by_email: @gallery_photo.user&.email,
           caption: @gallery_photo.caption,
           image_url: image_url,
-          created_at: @gallery_photo.created_at.iso8601
+          created_at: @gallery_photo.created_at.iso8601,
+          tagged_people: tagged_people_json
         }
       end
 
       private
+
+      def tagged_people_json
+        @gallery_photo.tagged_people.map { |p| person_tag_summary(p) }
+      end
+
+      def person_tag_summary(person)
+        {
+          id: person.id,
+          chart_external_id: person.chart_external_id,
+          first_name: person.first_name,
+          last_name: person.last_name
+        }
+      end
 
       def image_url
         return nil if @request.blank? || !@gallery_photo.image.attached?

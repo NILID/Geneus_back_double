@@ -6,7 +6,8 @@ module Api
       before_action :authenticate_user!
 
       def show
-        person = Person.find_for_api!(params[:id])
+        base = Person.find_for_api!(params[:id])
+        person = Person.includes(tagged_gallery_photos: { image_attachment: :blob }).find(base.id)
         render json: { person: Api::V1::PersonSerializer.new(person, request: request).as_json }
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Person not found' }, status: :not_found

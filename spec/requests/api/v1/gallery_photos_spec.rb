@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
+  let!(:tag_person) { create(:person, first_name: 'Tagged', last_name: 'One', gender: 'female') }
 
   def bearer_token(for_user = user)
     Warden::JWTAuth::UserEncoder.new.call(for_user, :user, nil).first
@@ -30,6 +31,7 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(mine_json['user_id']).to eq(user.id)
       expect(mine_json['uploaded_by_email']).to eq(user.email)
       expect(mine_json['image_url']).to be_present
+      expect(mine_json['tagged_people']).to eq([])
     end
   end
 
@@ -60,6 +62,22 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(json['gallery_photo']['user_id']).to eq(user.id)
       expect(json['gallery_photo']['uploaded_by_email']).to eq(user.email)
       expect(json['gallery_photo']['image_url']).to be_present
+    end
+
+    it 'creates with person_ids' do
+      png = Rack::Test::UploadedFile.new(
+        Rails.root.join('spec/fixtures/files/1x1.png'),
+        'image/png'
+      )
+      post api_v1_gallery_photos_path,
+           params: { gallery_photo: { caption: 'With tags', image: png, person_ids: [tag_person.id] } },
+           headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+      expect(response).to have_http_status(:created)
+      json = JSON.parse(response.body)
+      expect(json['gallery_photo']['tagged_people'].length).to eq(1)
+      expect(json['gallery_photo']['tagged_people'][0]['id']).to eq(tag_person.id)
+      expect(GalleryPhoto.last.tagged_people).to include(tag_person)
     end
 
     it 'returns 422 without file' do
@@ -126,9 +144,20 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(response).to have_http_status(:ok)
       expect(photo.reload.image).to be_attached
     end
-  end
 
-  describe 'DELETE /api/v1/gallery_photos/:id' do
+    it 'updates person_ids for own photo' do
+      photo = create(:gallery_photo, user: user)
+      patch api_v1_gallery_photo_path(photo),
+            params: { gallery_photo: { person_ids: [tag_person.id] } },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(photo.reload.tagged_people).to contain_exactly(tag_person)
+      json = JSON.parse(response.body)
+      expect(json['gallery_photo']['tagged_people'].map { |h| h['id'] }).to eq([tag_person.id])
+    end
+  end
     it 'returns 401 without token' do
       photo = create(:gallery_photo, user: user)
       delete api_v1_gallery_photo_path(photo)

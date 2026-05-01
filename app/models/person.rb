@@ -16,6 +16,12 @@ class Person < ApplicationRecord
 
   has_many :notes, :dependent => :destroy
 
+  has_many :gallery_photo_person_tags, dependent: :destroy
+  has_many :tagged_gallery_photos,
+           -> { reorder(created_at: :desc) },
+           through: :gallery_photo_person_tags,
+           source: :gallery_photo
+
   accepts_nested_attributes_for :parentship
 
   scope :men,   -> { where(gender: 'male') }

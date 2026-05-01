@@ -40,6 +40,20 @@ RSpec.describe 'Api::V1::People', type: :request do
       get api_v1_person_path(missing_id), headers: { 'Authorization' => "Bearer #{bearer_token}" }
       expect(response).to have_http_status(:not_found)
     end
+
+    it 'includes tagged_gallery_photos when person is tagged on media' do
+      tagged = create(:person, first_name: 'On', last_name: 'Photo', gender: 'male')
+      gp = create(:gallery_photo, user: user)
+      gp.tagged_people = [tagged]
+
+      get api_v1_person_path(tagged.id), headers: { 'Authorization' => "Bearer #{bearer_token}" }
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      photos = json['person']['tagged_gallery_photos']
+      expect(photos.length).to eq(1)
+      expect(photos[0]['id']).to eq(gp.id)
+      expect(photos[0]['image_url']).to be_present
+    end
   end
 
   describe 'PATCH /api/v1/people/:id' do

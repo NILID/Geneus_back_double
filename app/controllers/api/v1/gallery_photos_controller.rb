@@ -8,42 +8,49 @@ module Api
       def index
         photos = GalleryPhoto
           .order(created_at: :desc)
-          .includes(:user, image_attachment: :blob)
+          .includes(:user, :tagged_people, image_attachment: :blob)
         render json: {
           gallery_photos: photos.map { |p| Api::V1::GalleryPhotoSerializer.new(p, request: request).as_json }
         }
       end
 
       def create
-        permitted = params.require(:gallery_photo).permit(:caption, :image)
+        permitted = params.require(:gallery_photo).permit(:caption, :image, person_ids: [])
+        raw = params[:gallery_photo]
         photo = current_user.gallery_photos.build(caption: normalize_caption(permitted[:caption]))
         photo.image.attach(permitted[:image]) if permitted[:image].present?
 
-        if photo.save
-          render json: {
-            gallery_photo: Api::V1::GalleryPhotoSerializer.new(photo, request: request).as_json
-          }, status: :created
-        else
+        unless photo.save
           render json: { errors: photo.errors.full_messages }, status: :unprocessable_entity
+          return
         end
+
+        sync_person_tags!(photo, permitted, raw) if person_ids_in_raw?(raw)
+
+        render json: {
+          gallery_photo: Api::V1::GalleryPhotoSerializer.new(photo.reload, request: request).as_json
+        }, status: :created
       end
 
       def update
         photo = current_user.gallery_photos.find(params[:id])
-        permitted = params.require(:gallery_photo).permit(:caption, :image)
+        permitted = params.require(:gallery_photo).permit(:caption, :image, person_ids: [])
         raw = params[:gallery_photo]
         if raw.is_a?(ActionController::Parameters) && (raw.key?(:caption) || raw.key?('caption'))
           photo.caption = normalize_caption(permitted[:caption])
         end
         photo.image.attach(permitted[:image]) if permitted[:image].present?
 
-        if photo.save
-          render json: {
-            gallery_photo: Api::V1::GalleryPhotoSerializer.new(photo, request: request).as_json
-          }
-        else
+        unless photo.save
           render json: { errors: photo.errors.full_messages }, status: :unprocessable_entity
+          return
         end
+
+        sync_person_tags!(photo, permitted, raw) if person_ids_in_raw?(raw)
+
+        render json: {
+          gallery_photo: Api::V1::GalleryPhotoSerializer.new(photo.reload, request: request).as_json
+        }
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Photo not found' }, status: :not_found
       end
@@ -57,6 +64,22 @@ module Api
       end
 
       private
+
+      def person_ids_in_raw?(raw)
+        raw.is_a?(ActionController::Parameters) && (raw.key?(:person_ids) || raw.key?('person_ids'))
+      end
+
+      def sync_person_tags!(photo, permitted, raw)
+        return unless person_ids_in_raw?(raw)
+
+        ids = normalize_person_ids(permitted[:person_ids])
+        people = Person.where(id: ids)
+        photo.tagged_people = people.to_a
+      end
+
+      def normalize_person_ids(raw)
+        Array(raw).flatten.map { |x| Integer(x) rescue nil }.compact.uniq.select(&:positive?)
+      end
 
       def normalize_caption(value)
         return nil if value.nil?
