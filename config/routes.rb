@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       end
       get 'auth/me', to: 'users#show'
       resources :people, only: %i[show update]
+      resources :gallery_photos, only: %i[index create update destroy]
     end
   end
 
