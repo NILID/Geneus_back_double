@@ -127,6 +127,7 @@ class Person < ApplicationRecord
   def family_chart_node(relationship_index: nil)
     {
       id: chart_external_id,
+      person_id: id,
       data: family_chart_data,
       rels: family_chart_relationships(relationship_index: relationship_index)
     }

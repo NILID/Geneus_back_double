@@ -60,6 +60,7 @@ RSpec.describe Person, type: :model do
       node = child.family_chart_node
 
       expect(node[:id]).to eq(child.id.to_s)
+      expect(node[:person_id]).to eq(child.id)
       expect(node[:data]['gender']).to eq('M')
       expect(node[:rels][:parents]).to contain_exactly(father.id.to_s, mother.id.to_s)
     end
