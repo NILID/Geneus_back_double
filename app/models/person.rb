@@ -67,6 +67,32 @@ class Person < ApplicationRecord
     :allow_blank => true
   }
 
+  validates :birth_latitude,
+            numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90, allow_nil: true }
+  validates :birth_longitude,
+            numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180, allow_nil: true }
+  validates :death_latitude,
+            numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90, allow_nil: true }
+  validates :death_longitude,
+            numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180, allow_nil: true }
+
+  validate :birth_coordinates_pair
+  validate :death_coordinates_pair
+
+  def birth_coordinates_pair
+    return if birth_latitude.blank? && birth_longitude.blank?
+    return if birth_latitude.present? && birth_longitude.present?
+
+    errors.add(:base, 'Широта и долгота места рождения должны быть заданы вместе или обе пусты')
+  end
+
+  def death_coordinates_pair
+    return if death_latitude.blank? && death_longitude.blank?
+    return if death_latitude.present? && death_longitude.present?
+
+    errors.add(:base, 'Широта и долгота места смерти должны быть заданы вместе или обе пусты')
+  end
+
   def children
     Person
       .joins(:parentship)

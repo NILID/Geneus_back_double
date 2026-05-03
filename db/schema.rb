@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_05_01_210000) do
+ActiveRecord::Schema.define(version: 2026_05_03_120000) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -97,6 +97,10 @@ ActiveRecord::Schema.define(version: 2026_05_01_210000) do
     t.string "chart_id"
     t.string "first_name"
     t.string "last_name"
+    t.decimal "birth_latitude", precision: 10, scale: 7
+    t.decimal "birth_longitude", precision: 10, scale: 7
+    t.decimal "death_latitude", precision: 10, scale: 7
+    t.decimal "death_longitude", precision: 10, scale: 7
     t.index ["chart_id"], name: "index_people_on_chart_id", unique: true
   end
 

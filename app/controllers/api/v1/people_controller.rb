@@ -24,6 +24,13 @@ module Api
         render json: { error: 'Person not found' }, status: :not_found
       end
 
+      def map_locations
+        people = Person.where('birth_latitude IS NOT NULL OR death_latitude IS NOT NULL')
+        render json: {
+          people: Api::V1::PersonMapLocationSerializer.collection(people)
+        }
+      end
+
       private
 
       def api_person_attributes
@@ -36,6 +43,10 @@ module Api
           :date_of_death,
           :location_of_birth,
           :location_of_death,
+          :birth_latitude,
+          :birth_longitude,
+          :death_latitude,
+          :death_longitude,
           :avatar,
           { parentship_attributes: %i[id father_id mother_id] },
           partner_ids: []
@@ -45,6 +56,9 @@ module Api
           h[key] = nil if h[key].blank?
         end
         %w[bio location_of_birth location_of_death last_name].each do |key|
+          h[key] = nil if h[key].blank?
+        end
+        %w[birth_latitude birth_longitude death_latitude death_longitude].each do |key|
           h[key] = nil if h[key].blank?
         end
         h

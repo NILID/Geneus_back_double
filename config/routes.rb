@@ -15,7 +15,11 @@ Rails.application.routes.draw do
         patch  'auth/password',       to: 'auth/passwords#update'
       end
       get 'auth/me', to: 'users#show'
-      resources :people, only: %i[show update]
+      resources :people, only: %i[show update] do
+        collection do
+          get :map_locations
+        end
+      end
       resources :gallery_photos, only: %i[index create update destroy]
     end
   end

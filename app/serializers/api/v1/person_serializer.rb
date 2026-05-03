@@ -21,6 +21,10 @@ module Api
           date_of_death: @person.date_of_death&.iso8601,
           location_of_birth: @person.location_of_birth,
           location_of_death: @person.location_of_death,
+          birth_latitude: decimal_to_json(@person.birth_latitude),
+          birth_longitude: decimal_to_json(@person.birth_longitude),
+          death_latitude: decimal_to_json(@person.death_latitude),
+          death_longitude: decimal_to_json(@person.death_longitude),
           avatar_url: avatar_url,
           parents: @person.parents.map { |p| summary(p) },
           partners: @person.partners.distinct.map { |p| summary(p) },
@@ -30,6 +34,12 @@ module Api
       end
 
       private
+
+      def decimal_to_json(value)
+        return nil if value.nil?
+
+        value.to_f
+      end
 
       def tagged_gallery_photos_json
         @person.tagged_gallery_photos.map do |gp|
