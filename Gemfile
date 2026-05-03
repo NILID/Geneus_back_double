@@ -27,9 +27,6 @@ gem 'ffi', '1.15.5'
 
 gem 'dotenv-rails'
 
-# Use jquery as the JavaScript library
-gem 'jquery-rails'
-
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
