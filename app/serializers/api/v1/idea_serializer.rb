@@ -13,7 +13,8 @@ module Api
           user_id: @idea.user_id,
           author_email: @idea.user&.email,
           body: @idea.body,
-          created_at: @idea.created_at.iso8601
+          created_at: @idea.created_at.iso8601,
+          comments_count: @idea.comments_count
         }
       end
     end

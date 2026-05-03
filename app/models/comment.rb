@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class Idea < ApplicationRecord
+class Comment < ApplicationRecord
   belongs_to :user
-  has_many :comments, as: :commentable, dependent: :destroy
+  belongs_to :commentable, polymorphic: true, counter_cache: true
 
-  MAX_BODY = 10_000
+  MAX_BODY = 5000
 
   validates :body, presence: true, length: { maximum: MAX_BODY }
 end

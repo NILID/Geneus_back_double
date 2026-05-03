@@ -25,6 +25,7 @@ RSpec.describe 'Api::V1::Ideas', type: :request do
       newer = travel_to Time.zone.parse('2020-02-01 10:00') do
         create(:idea, user: other_user, body: 'Новая идея')
       end
+      create(:comment, commentable: newer, user: user, body: 'Комментарий')
 
       get api_v1_ideas_path, headers: { 'Authorization' => "Bearer #{bearer_token}" }
 
@@ -35,6 +36,7 @@ RSpec.describe 'Api::V1::Ideas', type: :request do
 
       first = json['ideas'].first
       expect(first['body']).to eq('Новая идея')
+      expect(first['comments_count']).to eq(1)
       expect(first['author_email']).to eq(other_user.email)
       expect(first['user_id']).to eq(other_user.id)
     end
@@ -58,6 +60,7 @@ RSpec.describe 'Api::V1::Ideas', type: :request do
       expect(json['idea']['body']).to eq('Подробности предложения')
       expect(json['idea']['user_id']).to eq(user.id)
       expect(json['idea']['author_email']).to eq(user.email)
+      expect(json['idea']['comments_count']).to eq(0)
     end
 
     it 'returns 422 for empty body' do

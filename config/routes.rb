@@ -21,7 +21,9 @@ Rails.application.routes.draw do
         end
       end
       resources :gallery_photos, only: %i[index create update destroy]
-      resources :ideas, only: %i[index create]
+      resources :ideas, only: %i[index create] do
+        resources :comments, only: %i[index create], module: :ideas
+      end
     end
   end
 
