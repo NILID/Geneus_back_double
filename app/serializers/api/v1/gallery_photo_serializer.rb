@@ -14,6 +14,7 @@ module Api
           user_id: @gallery_photo.user_id,
           uploaded_by_email: @gallery_photo.user&.email,
           caption: @gallery_photo.caption,
+          taken_year: @gallery_photo.taken_year,
           image_url: image_url,
           created_at: @gallery_photo.created_at.iso8601,
           tagged_people: tagged_people_json

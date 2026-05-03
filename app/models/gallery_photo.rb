@@ -13,6 +13,9 @@ class GalleryPhoto < ApplicationRecord
 
   validate :image_must_exist
   validate :acceptable_image, if: -> { image.attached? }
+  validates :taken_year,
+            inclusion: { in: 1800..(Date.current.year + 1), message: 'должен быть в допустимом диапазоне' },
+            allow_nil: true
 
   private
 

@@ -70,6 +70,8 @@ RSpec.describe 'Api::V1::People', type: :request do
       expect(photos.length).to eq(1)
       expect(photos[0]['id']).to eq(gp.id)
       expect(photos[0]['image_url']).to be_present
+      expect(photos[0]['tagged_people']).to be_an(Array)
+      expect(photos[0]['tagged_people'].map { |h| h['id'] }).to eq([tagged.id])
     end
   end
 

@@ -15,9 +15,10 @@ module Api
       end
 
       def create
-        permitted = params.require(:gallery_photo).permit(:caption, :image, person_ids: [])
+        permitted = params.require(:gallery_photo).permit(:caption, :image, :taken_year, person_ids: [])
         raw = params[:gallery_photo]
         photo = current_user.gallery_photos.build(caption: normalize_caption(permitted[:caption]))
+        photo.taken_year = normalize_taken_year(permitted[:taken_year])
         photo.image.attach(permitted[:image]) if permitted[:image].present?
 
         unless photo.save
@@ -34,10 +35,13 @@ module Api
 
       def update
         photo = current_user.gallery_photos.find(params[:id])
-        permitted = params.require(:gallery_photo).permit(:caption, :image, person_ids: [])
+        permitted = params.require(:gallery_photo).permit(:caption, :image, :taken_year, person_ids: [])
         raw = params[:gallery_photo]
         if raw.is_a?(ActionController::Parameters) && (raw.key?(:caption) || raw.key?('caption'))
           photo.caption = normalize_caption(permitted[:caption])
+        end
+        if raw.is_a?(ActionController::Parameters) && (raw.key?(:taken_year) || raw.key?('taken_year'))
+          photo.taken_year = normalize_taken_year(permitted[:taken_year])
         end
         photo.image.attach(permitted[:image]) if permitted[:image].present?
 
@@ -86,6 +90,18 @@ module Api
 
         s = value.to_s.strip
         s.presence
+      end
+
+      def normalize_taken_year(value)
+        return nil if value.nil?
+
+        s = value.to_s.strip
+        return nil if s.blank?
+
+        y = Integer(s, 10)
+        y.positive? ? y : nil
+      rescue ArgumentError, TypeError
+        nil
       end
     end
   end

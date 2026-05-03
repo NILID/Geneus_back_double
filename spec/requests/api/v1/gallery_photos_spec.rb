@@ -64,6 +64,33 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(json['gallery_photo']['image_url']).to be_present
     end
 
+    it 'creates a photo with taken_year' do
+      png = Rack::Test::UploadedFile.new(
+        Rails.root.join('spec/fixtures/files/1x1.png'),
+        'image/png'
+      )
+      post api_v1_gallery_photos_path,
+           params: { gallery_photo: { image: png, taken_year: 1985 } },
+           headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+      expect(response).to have_http_status(:created)
+      json = JSON.parse(response.body)
+      expect(json['gallery_photo']['taken_year']).to eq(1985)
+      expect(GalleryPhoto.last.taken_year).to eq(1985)
+    end
+
+    it 'returns 422 for taken_year out of range' do
+      png = Rack::Test::UploadedFile.new(
+        Rails.root.join('spec/fixtures/files/1x1.png'),
+        'image/png'
+      )
+      post api_v1_gallery_photos_path,
+           params: { gallery_photo: { image: png, taken_year: 1700 } },
+           headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
     it 'creates with person_ids' do
       png = Rack::Test::UploadedFile.new(
         Rails.root.join('spec/fixtures/files/1x1.png'),
@@ -157,7 +184,33 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       json = JSON.parse(response.body)
       expect(json['gallery_photo']['tagged_people'].map { |h| h['id'] }).to eq([tag_person.id])
     end
+
+    it 'updates taken_year for own photo' do
+      photo = create(:gallery_photo, user: user)
+      patch api_v1_gallery_photo_path(photo),
+            params: { gallery_photo: { taken_year: 1998 } },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(photo.reload.taken_year).to eq(1998)
+      json = JSON.parse(response.body)
+      expect(json['gallery_photo']['taken_year']).to eq(1998)
+    end
+
+    it 'clears taken_year when sent blank' do
+      photo = create(:gallery_photo, user: user, taken_year: 2000)
+      patch api_v1_gallery_photo_path(photo),
+            params: { gallery_photo: { taken_year: '' } },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(photo.reload.taken_year).to be_nil
+    end
   end
+
+  describe 'DELETE /api/v1/gallery_photos/:id' do
     it 'returns 401 without token' do
       photo = create(:gallery_photo, user: user)
       delete api_v1_gallery_photo_path(photo)

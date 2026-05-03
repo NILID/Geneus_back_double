@@ -43,22 +43,8 @@ module Api
 
       def tagged_gallery_photos_json
         @person.tagged_gallery_photos.map do |gp|
-          {
-            id: gp.id,
-            caption: gp.caption,
-            image_url: gallery_photo_image_url(gp),
-            created_at: gp.created_at.iso8601
-          }
+          Api::V1::GalleryPhotoSerializer.new(gp, request: @request).as_json
         end
-      end
-
-      def gallery_photo_image_url(gallery_photo)
-        return nil if @request.blank? || !gallery_photo.image.attached?
-
-        @request.base_url + Rails.application.routes.url_helpers.rails_blob_path(
-          gallery_photo.image,
-          only_path: true
-        )
       end
 
       def avatar_url
