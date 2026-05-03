@@ -13,8 +13,6 @@ class Person < ApplicationRecord
   has_one :mother, through: :parentship, source: :mother
   has_one :father, through: :parentship, source: :father
 
-  has_many :notes, :dependent => :destroy
-
   has_many :gallery_photo_person_tags, dependent: :destroy
   has_many :tagged_gallery_photos,
            -> { reorder(created_at: :desc) },

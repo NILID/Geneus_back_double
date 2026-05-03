@@ -81,14 +81,6 @@ ActiveRecord::Schema.define(version: 2026_05_03_220000) do
     t.index ["user_id"], name: "index_ideas_on_user_id"
   end
 
-  create_table "notes", force: :cascade do |t|
-    t.text "content"
-    t.integer "person_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["person_id"], name: "index_notes_on_person_id"
-  end
-
   create_table "parentships", force: :cascade do |t|
     t.integer "person_id"
     t.integer "father_id"
@@ -157,7 +149,6 @@ ActiveRecord::Schema.define(version: 2026_05_03_220000) do
   add_foreign_key "gallery_photo_person_tags", "people"
   add_foreign_key "gallery_photos", "users"
   add_foreign_key "ideas", "users"
-  add_foreign_key "notes", "people"
   add_foreign_key "parentships", "people"
   add_foreign_key "parentships", "people", column: "father_id"
   add_foreign_key "parentships", "people", column: "mother_id"
