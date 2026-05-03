@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :people, except: %i[edit update new create destroy] do
+  resources :people, only: [] do
     collection do
       get  :list
       get  :family_chart

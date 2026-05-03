@@ -1,23 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe PeopleController, type: :controller do
-
   let!(:person) { create(:person) }
   let(:user) { create(:user) }
-
-  describe "GET #index" do
-    it "returns a success response" do
-      get :index
-      expect(response).to be_successful
-    end
-  end
-
-  describe "GET #show" do
-    it "returns a success response" do
-      get :show, params: {id: person}
-      expect(response).to be_successful
-    end
-  end
 
   describe "POST #update_tree" do
     let!(:father) { create(:person, first_name: 'John', last_name: 'Doe', gender: 'male') }
