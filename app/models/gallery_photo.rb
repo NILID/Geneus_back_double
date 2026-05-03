@@ -3,6 +3,7 @@
 class GalleryPhoto < ApplicationRecord
   belongs_to :user
 
+  has_many :comments, as: :commentable, dependent: :destroy
   has_many :gallery_photo_person_tags, dependent: :destroy
   has_many :tagged_people, through: :gallery_photo_person_tags, source: :person
 

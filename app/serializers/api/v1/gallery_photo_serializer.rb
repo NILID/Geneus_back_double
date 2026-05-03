@@ -17,6 +17,7 @@ module Api
           taken_year: @gallery_photo.taken_year,
           image_url: image_url,
           created_at: @gallery_photo.created_at.iso8601,
+          comments_count: @gallery_photo.comments_count,
           tagged_people: tagged_people_json
         }
       end

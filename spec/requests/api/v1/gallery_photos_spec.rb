@@ -32,6 +32,7 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(mine_json['uploaded_by_email']).to eq(user.email)
       expect(mine_json['image_url']).to be_present
       expect(mine_json['tagged_people']).to eq([])
+      expect(mine_json['comments_count']).to eq(0)
     end
   end
 

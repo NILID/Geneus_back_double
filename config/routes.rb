@@ -20,7 +20,9 @@ Rails.application.routes.draw do
           get :map_locations
         end
       end
-      resources :gallery_photos, only: %i[index create update destroy]
+      resources :gallery_photos, only: %i[index create update destroy] do
+        resources :comments, only: %i[index create], module: :gallery_photos
+      end
       resources :ideas, only: %i[index create] do
         resources :comments, only: %i[index create], module: :ideas
       end
