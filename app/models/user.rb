@@ -4,6 +4,7 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   has_many :gallery_photos, dependent: :destroy
+  has_many :ideas, dependent: :destroy
 
   devise :database_authenticatable, :registerable,
          :recoverable, :validatable,

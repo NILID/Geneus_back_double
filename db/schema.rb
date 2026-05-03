@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_05_03_130000) do
+ActiveRecord::Schema.define(version: 2026_05_03_150000) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -57,6 +57,15 @@ ActiveRecord::Schema.define(version: 2026_05_03_130000) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "taken_year"
     t.index ["user_id"], name: "index_gallery_photos_on_user_id"
+  end
+
+  create_table "ideas", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_ideas_on_created_at"
+    t.index ["user_id"], name: "index_ideas_on_user_id"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -123,6 +132,7 @@ ActiveRecord::Schema.define(version: 2026_05_03_130000) do
   add_foreign_key "gallery_photo_person_tags", "gallery_photos"
   add_foreign_key "gallery_photo_person_tags", "people"
   add_foreign_key "gallery_photos", "users"
+  add_foreign_key "ideas", "users"
   add_foreign_key "notes", "people"
   add_foreign_key "parentships", "people"
   add_foreign_key "parentships", "people", column: "father_id"
