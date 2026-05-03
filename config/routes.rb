@@ -19,6 +19,7 @@ Rails.application.routes.draw do
         collection do
           get :map_locations
         end
+        resources :facts, only: %i[index create], module: :people
       end
       resources :gallery_photos, only: %i[index create update destroy] do
         resources :comments, only: %i[index create], module: :gallery_photos

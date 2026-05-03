@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_05_03_210000) do
+ActiveRecord::Schema.define(version: 2026_05_03_220000) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -127,6 +127,16 @@ ActiveRecord::Schema.define(version: 2026_05_03_210000) do
     t.index ["chart_id"], name: "index_people_on_chart_id", unique: true
   end
 
+  create_table "person_facts", force: :cascade do |t|
+    t.integer "person_id", null: false
+    t.integer "user_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["person_id"], name: "index_person_facts_on_person_id"
+    t.index ["user_id"], name: "index_person_facts_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -153,4 +163,6 @@ ActiveRecord::Schema.define(version: 2026_05_03_210000) do
   add_foreign_key "parentships", "people", column: "mother_id"
   add_foreign_key "partnerships", "people"
   add_foreign_key "partnerships", "people", column: "partner_id"
+  add_foreign_key "person_facts", "people"
+  add_foreign_key "person_facts", "users"
 end

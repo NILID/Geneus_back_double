@@ -21,6 +21,8 @@ class Person < ApplicationRecord
            through: :gallery_photo_person_tags,
            source: :gallery_photo
 
+  has_many :person_facts, dependent: :destroy
+
   accepts_nested_attributes_for :parentship
 
   scope :men,   -> { where(gender: 'male') }

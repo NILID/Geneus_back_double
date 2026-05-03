@@ -29,11 +29,21 @@ module Api
           parents: @person.parents.map { |p| summary(p) },
           partners: @person.partners.distinct.map { |p| summary(p) },
           children: @person.children.map { |p| summary(p) },
-          tagged_gallery_photos: tagged_gallery_photos_json
+          tagged_gallery_photos: tagged_gallery_photos_json,
+          recent_person_facts: recent_person_facts_json
         }
       end
 
       private
+
+      def recent_person_facts_json
+        PersonFact
+          .where(person_id: @person.id)
+          .includes(:user)
+          .newest_first
+          .limit(3)
+          .map { |f| Api::V1::PersonFactSerializer.new(f).as_json }
+      end
 
       def decimal_to_json(value)
         return nil if value.nil?
