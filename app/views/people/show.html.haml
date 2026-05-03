@@ -3,15 +3,6 @@
     .col-6
       %h1.h2= @person.full_name
 
-    .col-6.text-right
-      .dropdown
-        %a.btn.btn-dark.dropdown-toggle{ href: '#', role: 'button', data: { toggle: "dropdown"}, aria: { haspopup: "true", expanded: "false" } }
-          Menu
-        .dropdown-menu
-          .dropdown-divider
-          = link_to 'Current version', @person,           class: 'dropdown-item'
-          = link_to 'View history', [:versions, @person], class: 'dropdown-item'
-
 .container.mt-3
   .row
     .col-8

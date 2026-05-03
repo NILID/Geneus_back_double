@@ -2,7 +2,7 @@ class PeopleController < ApplicationController
   before_action :authenticate_user!, only: %i[family_chart update_tree list]
   skip_before_action :verify_authenticity_token, only: [:update_tree]
 
-  before_action :set_person, only: %i[show destroy versions versions_show]
+  before_action :set_person, only: %i[show destroy]
 
   def index
     @people = Person.all
@@ -37,14 +37,6 @@ class PeopleController < ApplicationController
     render json: { ok: true, nodes: FamilyChartSerializer.new(people).nodes }
   rescue FamilyChartTreeSync::Error => e
     render json: { ok: false, errors: [e.message] }, status: :unprocessable_entity
-  end
-
-  def versions
-  end
-
-  def versions_show
-    @person.revert_to( params[:version].to_i )
-    puts "\n\n#{params[:version]} :: #{@person.version}\n\n"
   end
 
   def show

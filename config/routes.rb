@@ -25,13 +25,6 @@ Rails.application.routes.draw do
   end
 
   resources :people, except: %i[edit update new create destroy] do
-    member do
-     # match 'versions/:version', :action => :versions_show, :as => 'version_of', :version => /\d+/
-      get :versions
-      # match 'versions/compare/:from/:to',
-      #   :action => :versions_compare,
-      #   :constraints => { :from => /\d+/, :to => /\d+/ }
-    end
     collection do
       get  :list
       get  :family_chart

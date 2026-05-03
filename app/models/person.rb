@@ -5,7 +5,6 @@ class Person < ApplicationRecord
   after_create :create_parentship
 
   has_one_attached :avatar
-  has_paper_trail
 
   has_many :partnerships, :dependent => :destroy
   has_many :partners, through: :partnerships, :source => :partner

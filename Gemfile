@@ -50,7 +50,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'mini_magick'
 
-gem 'paper_trail'
 gem 'validates_timeliness'
 gem 'haml-rails'
 
