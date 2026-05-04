@@ -103,6 +103,36 @@ RSpec.describe 'Api::V1::People', type: :request do
     end
   end
 
+  describe 'GET /api/v1/people/recent' do
+    it 'returns 401 without token' do
+      get recent_api_v1_people_path
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns people ordered by updated_at descending' do
+      person.update_column(:updated_at, 5.days.ago)
+      older = create(:person, first_name: 'Older', gender: 'male')
+      newer = create(:person, first_name: 'Newer', gender: 'female')
+      older.update_column(:updated_at, 2.days.ago)
+      newer.update_column(:updated_at, 1.day.ago)
+
+      get recent_api_v1_people_path, headers: { 'Authorization' => "Bearer #{bearer_token}" }
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      list = json['people']
+      newer_idx = list.index { |p| p['first_name'] == 'Newer' }
+      older_idx = list.index { |p| p['first_name'] == 'Older' }
+      expect(newer_idx).not_to be_nil
+      expect(older_idx).not_to be_nil
+      expect(newer_idx).to be < older_idx
+      first = list.first
+      expect(first['id']).to eq(newer.id)
+      expect(first['first_name']).to eq('Newer')
+      expect(first['chart_external_id']).to be_a(String)
+      expect(first['updated_at']).to be_present
+    end
+  end
+
   describe 'PATCH /api/v1/people/:id' do
     it 'returns 401 without token' do
       patch api_v1_person_path(person.id), params: { person: { first_name: 'Updated' } }, as: :json

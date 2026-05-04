@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       resources :people, only: %i[show update] do
         collection do
           get :map_locations
+          get :recent
         end
         resources :facts, only: %i[index create], module: :people
       end

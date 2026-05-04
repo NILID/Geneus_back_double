@@ -33,6 +33,16 @@ module Api
         }
       end
 
+      def recent
+        people = Person
+          .order(updated_at: :desc)
+          .limit(12)
+          .includes(avatar_attachment: :blob)
+        render json: {
+          people: people.map { |p| Api::V1::PersonHomeRowSerializer.new(p, request: request).as_json }
+        }
+      end
+
       private
 
       def api_person_attributes
