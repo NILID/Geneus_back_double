@@ -1,7 +1,7 @@
 # Devise user for SPA / JWT (change password after first login in production).
 User.find_or_create_by!(email: 'admin@example.com') do |u|
-  u.password = 'password123'
-  u.password_confirmation = 'password123'
+  u.password = 'Password1!'
+  u.password_confirmation = 'Password1!'
 end
 
 # This file should contain all the record creation needed to seed the database with its default values.

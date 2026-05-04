@@ -17,6 +17,7 @@ class User < ApplicationRecord
 
   validates :person_id, uniqueness: { allow_nil: true }
   validate :linked_person_must_exist
+  validate :password_must_meet_complexity_requirements, if: -> { password.present? }
 
   def auth_json
     { id: id, email: email, person_id: person_id }
@@ -28,5 +29,16 @@ class User < ApplicationRecord
     return if person_id.blank?
 
     errors.add(:person_id, 'указанная персона не найдена') unless Person.exists?(person_id)
+  end
+
+  def password_must_meet_complexity_requirements
+    return if password.blank?
+
+    unless password.match?(/[A-Z]/)
+      errors.add(:password, 'должен содержать хотя бы одну заглавную латинскую букву')
+    end
+    unless password.match?(/[^A-Za-z0-9]/)
+      errors.add(:password, 'должен содержать хотя бы один специальный символ')
+    end
   end
 end
