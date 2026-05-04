@@ -1,4 +1,4 @@
-# Devise user for SPA / JWT (change password after first login in production).
+# Bootstrap user for dev (Rails console / seeds). In production, prefer creating users via invitation.
 User.find_or_create_by!(email: 'admin@example.com') do |u|
   u.password = 'Password1!'
   u.password_confirmation = 'Password1!'

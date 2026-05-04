@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :person_facts, dependent: :destroy
 
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable,
          :recoverable, :validatable, :invitable,
          :jwt_authenticatable,
          jwt_revocation_strategy: self

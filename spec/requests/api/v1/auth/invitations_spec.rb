@@ -9,6 +9,40 @@ RSpec.describe 'Api::V1::Auth::Invitations', type: :request do
     Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
   end
 
+  describe 'POST /api/v1/auth/invitations/link' do
+    it 'returns 401 without token' do
+      post '/api/v1/auth/invitations/link',
+           params: { user: { email: 'guest@example.com' } },
+           as: :json
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'creates invite without email and returns url and share text' do
+      before_mails = ActionMailer::Base.deliveries.size
+      expect do
+        post '/api/v1/auth/invitations/link',
+             params: { user: { email: 'manual_invite@example.com' } },
+             headers: { 'Authorization' => "Bearer #{bearer_token_for(inviter)}" },
+             as: :json
+      end.to change(User, :count).by(1)
+
+      expect(ActionMailer::Base.deliveries.size).to eq(before_mails)
+      expect(response).to have_http_status(:created)
+      json = JSON.parse(response.body)
+      expect(json['email']).to eq('manual_invite@example.com')
+      expect(json['invitation_url']).to include('invitation_token=')
+      expect(json['invitation_text']).to include(json['invitation_url'])
+      expect(json['invitation_expires_at']).to be_present
+      expires = Time.zone.parse(json['invitation_expires_at'])
+      expect(expires).to be > Time.current
+      expect(expires).to be_within(1.minute).of(24.hours.from_now)
+
+      invited = User.find_by!(email: 'manual_invite@example.com')
+      expect(invited.invited_by).to eq(inviter)
+      expect(invited.invitation_sent_at).to be_present
+    end
+  end
+
   describe 'POST /api/v1/auth/invitations' do
     it 'returns 401 without token' do
       post '/api/v1/auth/invitations',

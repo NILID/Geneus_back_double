@@ -10,9 +10,9 @@ Rails.application.routes.draw do
       devise_scope :user do
         post   'auth/login',    to: 'auth/sessions#create'
         delete 'auth/logout',   to: 'auth/sessions#destroy'
-        post   'auth/register', to: 'auth/registrations#create'
         post   'auth/password',       to: 'auth/passwords#create'
         patch  'auth/password',       to: 'auth/passwords#update'
+        post   'auth/invitations/link', to: 'auth/invitations#create_link'
         post   'auth/invitations',    to: 'auth/invitations#create'
         patch  'auth/invitations',    to: 'auth/invitations#update'
       end
