@@ -1,0 +1,11 @@
+<% frontend = ENV.fetch('FRONTEND_URL', 'http://localhost:3000').chomp('/') %>
+<% accept_url = "#{frontend}/accept-invitation?invitation_token=#{CGI.escape(@token)}" %>
+
+Здравствуйте!
+
+Вас пригласили присоединиться к семейной хронике.
+
+Перейдите по ссылке, чтобы принять приглашение и задать пароль:
+<%= accept_url %>
+
+Если вы не ожидали это письмо, просто проигнорируйте его.

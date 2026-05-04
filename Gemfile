@@ -14,6 +14,7 @@ gem 'sassc-rails'
 gem 'rack-cors'
 
 gem 'devise', '~> 4.9'
+gem 'devise_invitable', '~> 2.0'
 gem 'devise-jwt', '~> 0.12'
 
 # Use Uglifier as compressor for JavaScript assets

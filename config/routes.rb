@@ -13,6 +13,8 @@ Rails.application.routes.draw do
         post   'auth/register', to: 'auth/registrations#create'
         post   'auth/password',       to: 'auth/passwords#create'
         patch  'auth/password',       to: 'auth/passwords#update'
+        post   'auth/invitations',    to: 'auth/invitations#create'
+        patch  'auth/invitations',    to: 'auth/invitations#update'
       end
       get   'auth/me', to: 'users#show'
       patch 'auth/me', to: 'users#update'

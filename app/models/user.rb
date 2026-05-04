@@ -11,9 +11,11 @@ class User < ApplicationRecord
   has_many :person_facts, dependent: :destroy
 
   devise :database_authenticatable, :registerable,
-         :recoverable, :validatable,
+         :recoverable, :validatable, :invitable,
          :jwt_authenticatable,
          jwt_revocation_strategy: self
+
+  has_many :invitations, class_name: 'User', as: :invited_by, dependent: :nullify
 
   validates :person_id, uniqueness: { allow_nil: true }
   validate :linked_person_must_exist

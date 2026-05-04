@@ -100,6 +100,9 @@ GEM
     devise-jwt (0.13.0)
       devise (>= 4.0.0, < 6.0.0)
       warden-jwt_auth (~> 0.10)
+    devise_invitable (2.0.11)
+      actionmailer (>= 5.0)
+      devise (>= 4.6)
     diff-lcs (1.6.2)
     dotenv (3.2.0)
     dotenv-rails (3.2.0)
@@ -324,6 +327,7 @@ DEPENDENCIES
   coffee-rails (~> 5)
   devise (~> 4.9)
   devise-jwt (~> 0.12)
+  devise_invitable (~> 2.0)
   dotenv-rails
   factory_bot_rails
   faker
