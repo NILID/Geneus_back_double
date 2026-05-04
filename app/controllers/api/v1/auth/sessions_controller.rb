@@ -18,7 +18,7 @@ module Api
         end
 
         def user_json(user)
-          { id: user.id, email: user.email }
+          user.auth_json
         end
       end
     end

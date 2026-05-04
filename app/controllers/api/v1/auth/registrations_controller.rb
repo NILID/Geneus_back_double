@@ -12,7 +12,7 @@ module Api
           resource.save
           if resource.persisted?
             sign_in(resource)
-            render json: { id: resource.id, email: resource.email }, status: :created
+            render json: resource.auth_json, status: :created
           else
             render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
           end

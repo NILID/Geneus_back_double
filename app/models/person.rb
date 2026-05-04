@@ -23,6 +23,8 @@ class Person < ApplicationRecord
 
   has_many :person_facts, dependent: :destroy
 
+  has_one :user, dependent: :nullify
+
   accepts_nested_attributes_for :parentship
 
   scope :men,   -> { where(gender: 'male') }

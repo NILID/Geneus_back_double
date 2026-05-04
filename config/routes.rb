@@ -14,7 +14,8 @@ Rails.application.routes.draw do
         post   'auth/password',       to: 'auth/passwords#create'
         patch  'auth/password',       to: 'auth/passwords#update'
       end
-      get 'auth/me', to: 'users#show'
+      get   'auth/me', to: 'users#show'
+      patch 'auth/me', to: 'users#update'
       resources :people, only: %i[show update] do
         collection do
           get :map_locations
