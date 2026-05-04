@@ -26,6 +26,10 @@ RSpec.describe 'Api::V1::People', type: :request do
       expect(json['person']['first_name']).to eq('Api')
       expect(json['person']['last_name']).to eq('Person')
       expect(json['person']['avatar_url']).to be_nil
+      expect(json['person']).to have_key('birth_date_year_only')
+      expect(json['person']).to have_key('death_date_year_only')
+      expect(json['person']['birth_date_year_only']).to be false
+      expect(json['person']['death_date_year_only']).to be false
     end
 
     it 'resolves by chart_id when not all-digits' do
@@ -134,6 +138,34 @@ RSpec.describe 'Api::V1::People', type: :request do
       json = JSON.parse(response.body)
       expect(json['person']['first_name']).to eq('Updated')
       expect(json['person']['last_name']).to eq('Name')
+    end
+
+    it 'stores year-only birth and death flags with placeholder dates' do
+      patch api_v1_person_path(person.id),
+            params: {
+              person: {
+                first_name: person.first_name,
+                last_name: person.last_name,
+                gender: person.gender,
+                date_of_birth: '1920-01-01',
+                birth_date_year_only: true,
+                date_of_death: '1995-01-01',
+                death_date_year_only: true
+              }
+            },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      person.reload
+      expect(person.date_of_birth).to eq(Date.new(1920, 1, 1))
+      expect(person.birth_date_year_only).to be true
+      expect(person.date_of_death).to eq(Date.new(1995, 1, 1))
+      expect(person.death_date_year_only).to be true
+
+      json = JSON.parse(response.body)
+      expect(json['person']['birth_date_year_only']).to be true
+      expect(json['person']['death_date_year_only']).to be true
     end
 
     it 'updates geographic coordinates via JSON' do

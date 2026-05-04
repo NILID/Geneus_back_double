@@ -19,6 +19,8 @@ module Api
           bio: @person.bio,
           date_of_birth: @person.date_of_birth&.iso8601,
           date_of_death: @person.date_of_death&.iso8601,
+          birth_date_year_only: @person.birth_date_year_only,
+          death_date_year_only: @person.death_date_year_only,
           location_of_birth: @person.location_of_birth,
           location_of_death: @person.location_of_death,
           birth_latitude: decimal_to_json(@person.birth_latitude),

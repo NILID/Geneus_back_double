@@ -41,6 +41,8 @@ module Api
           :last_name,
           :gender,
           :bio,
+          :birth_date_year_only,
+          :death_date_year_only,
           :date_of_birth,
           :date_of_death,
           :location_of_birth,
@@ -62,6 +64,10 @@ module Api
         end
         %w[birth_latitude birth_longitude death_latitude death_longitude].each do |key|
           h[key] = nil if h[key].blank?
+        end
+        boolean = ActiveModel::Type::Boolean.new
+        %w[birth_date_year_only death_date_year_only].each do |key|
+          h[key] = boolean.cast(h[key]) if h.key?(key)
         end
         h
       end

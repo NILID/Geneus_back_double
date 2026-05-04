@@ -47,6 +47,18 @@ RSpec.describe Person, type: :model do
     expect(person.errors[:first_name]).not_to be_empty
   end
 
+  it 'clears birth_date_year_only when date_of_birth is blank' do
+    p = build(:person, date_of_birth: nil, birth_date_year_only: true)
+    expect(p).to be_valid
+    expect(p.birth_date_year_only).to be false
+  end
+
+  it 'clears death_date_year_only when date_of_death is blank' do
+    p = build(:person, date_of_death: nil, death_date_year_only: true)
+    expect(p).to be_valid
+    expect(p.death_date_year_only).to be false
+  end
+
   describe '#family_chart_node' do
     let!(:father) { create(:person, first_name: 'Father', last_name: 'Doe', gender: 'male') }
     let!(:mother) { create(:person, first_name: 'Mother', last_name: 'Doe', gender: 'female') }

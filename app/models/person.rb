@@ -4,6 +4,8 @@ class Person < ApplicationRecord
 
   after_create :create_parentship
 
+  before_validation :normalize_year_only_date_flags
+
   has_one_attached :avatar
 
   has_many :partnerships, :dependent => :destroy
@@ -263,6 +265,11 @@ class Person < ApplicationRecord
   end
 
   private
+
+  def normalize_year_only_date_flags
+    self.birth_date_year_only = false if date_of_birth.blank?
+    self.death_date_year_only = false if date_of_death.blank?
+  end
 
   def create_parentship
     Parentship.find_or_create_by(person: self) if gender.present?
