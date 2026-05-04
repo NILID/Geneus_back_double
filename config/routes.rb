@@ -22,6 +22,9 @@ Rails.application.routes.draw do
         collection do
           get :map_locations
           get :recent
+          get :list
+          get :family_chart
+          post :update_tree
         end
         resources :facts, only: %i[index create], module: :people
       end
@@ -33,14 +36,4 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  resources :people, only: [] do
-    collection do
-      get  :list
-      get  :family_chart
-      post :update_tree
-    end
-  end
-
-  root to: 'people#index'
 end
