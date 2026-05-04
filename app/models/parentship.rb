@@ -2,8 +2,8 @@ class Parentship < ApplicationRecord
   after_update :manage_partner
 
   belongs_to :person
-  belongs_to :father, class_name: 'Person', foreign_key: 'father_id', required: false
-  belongs_to :mother, class_name: 'Person', foreign_key: 'mother_id', required: false
+  belongs_to :father, class_name: 'Person', foreign_key: 'father_id', inverse_of: :parentships_as_father, required: false
+  belongs_to :mother, class_name: 'Person', foreign_key: 'mother_id', inverse_of: :parentships_as_mother, required: false
 
   validates_presence_of :person
   validate :cannot_be_own_parent

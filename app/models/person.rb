@@ -15,6 +15,18 @@ class Person < ApplicationRecord
   has_one :mother, through: :parentship, source: :mother
   has_one :father, through: :parentship, source: :father
 
+  # Rows where this person is another person's parent (FK on parentships.father_id / mother_id).
+  has_many :parentships_as_father,
+           class_name: 'Parentship',
+           foreign_key: :father_id,
+           inverse_of: :father,
+           dependent: :nullify
+  has_many :parentships_as_mother,
+           class_name: 'Parentship',
+           foreign_key: :mother_id,
+           inverse_of: :mother,
+           dependent: :nullify
+
   has_many :gallery_photo_person_tags, dependent: :destroy
   has_many :tagged_gallery_photos,
            -> { reorder(created_at: :desc) },
@@ -123,9 +135,9 @@ class Person < ApplicationRecord
     raise ArgumentError, "Child must be a Person" unless child.is_a?(Person)
 
     if gender == 'male'
-      children_as_father.find_or_create_by(child: child)
+      parentships_as_father.find_or_create_by(person: child)
     elsif gender == 'female'
-      children_as_mother.find_or_create_by(child: child)
+      parentships_as_mother.find_or_create_by(person: child)
     else
       errors.add(:base, "Cannot determine person's gender.")
       false
@@ -135,10 +147,10 @@ class Person < ApplicationRecord
   def remove_child( child )
     raise ArgumentError, "Child must be a Person" unless child.is_a?(Person)
 
-    association = gender == 'male' ? children_as_father : gender == 'female' ? children_as_mother : nil
+    association = gender == 'male' ? parentships_as_father : gender == 'female' ? parentships_as_mother : nil
 
     if association
-      link = association.find_by(child: child)
+      link = association.find_by(person: child)
       link&.destroy
     else
       errors.add(:base, "Cannot determine person's gender.")
@@ -216,8 +228,8 @@ class Person < ApplicationRecord
     )
 
     # Дети
-    (children_as_father + children_as_mother).uniq.each do |child_ps|
-      child = child_ps.child
+    (parentships_as_father.to_a + parentships_as_mother.to_a).uniq.each do |child_ps|
+      child = child_ps.person
       person_data['children'] << child.attributes.except('created_at', 'updated_at').merge(
         'data' => { '$orn' => 'top' },
         'children' => []
