@@ -13,6 +13,8 @@ gem 'sassc-rails'
 
 gem 'rack-cors'
 
+gem 'nokogiri', '1.17.2'
+
 gem 'devise', '~> 4.9'
 gem 'devise_invitable', '~> 2.0'
 gem 'devise-jwt', '~> 0.12'
