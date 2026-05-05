@@ -1,4 +1,6 @@
 class Partnership < ApplicationRecord
+  audited
+
   belongs_to :person
   belongs_to :partner, class_name: 'Person'
 

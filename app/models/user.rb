@@ -3,6 +3,13 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
+  audited except: %i[
+    encrypted_password
+    reset_password_token
+    jti
+    invitation_token
+  ]
+
   belongs_to :person, optional: true
 
   has_many :gallery_photos, dependent: :destroy

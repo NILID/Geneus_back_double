@@ -2,6 +2,8 @@ class Person < ApplicationRecord
   include Tokenable
   include Rails.application.routes.url_helpers
 
+  audited
+
   after_create :create_parentship
 
   before_validation :normalize_year_only_date_flags

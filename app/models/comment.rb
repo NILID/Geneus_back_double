@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Comment < ApplicationRecord
+  audited
+
   belongs_to :user
   belongs_to :commentable, polymorphic: true, counter_cache: true
 

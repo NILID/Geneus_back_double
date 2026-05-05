@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Idea < ApplicationRecord
+  audited
+
   belongs_to :user
   has_many :comments, as: :commentable, dependent: :destroy
 

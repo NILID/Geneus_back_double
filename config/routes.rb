@@ -18,6 +18,8 @@ Rails.application.routes.draw do
       end
       get   'auth/me', to: 'users#show'
       patch 'auth/me', to: 'users#update'
+      get 'audits/filter_options', to: 'audits#filter_options'
+      resources :audits, only: [:index]
       resources :people, only: %i[show update] do
         collection do
           get :map_locations

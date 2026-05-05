@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class GalleryPhotoPersonTag < ApplicationRecord
+  audited
+
   belongs_to :gallery_photo
   belongs_to :person
 

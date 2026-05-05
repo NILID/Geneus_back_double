@@ -1,4 +1,6 @@
 class Parentship < ApplicationRecord
+  audited
+
   after_update :manage_partner
 
   belongs_to :person
