@@ -8,6 +8,7 @@ module Api
         before_action :set_person
 
         def index
+          authorize! :read, PersonFact
           facts = @person.person_facts.includes(:user).newest_first
           render json: {
             person_facts: facts.map { |f| Api::V1::PersonFactSerializer.new(f).as_json }
@@ -15,6 +16,7 @@ module Api
         end
 
         def create
+          authorize! :create, PersonFact
           permitted = params.require(:person_fact).permit(:body)
           fact = @person.person_facts.build(
             user: current_user,

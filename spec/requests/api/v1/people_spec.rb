@@ -172,6 +172,7 @@ RSpec.describe 'Api::V1::People', type: :request do
   end
 
   describe 'POST /api/v1/people/update_tree' do
+    let(:user) { create(:user, :moderator) }
     let!(:father) { create(:person, first_name: 'John', last_name: 'Doe', gender: 'male') }
     let!(:mother) { create(:person, first_name: 'Jane', last_name: 'Doe', gender: 'female') }
     let!(:child) { create(:person, first_name: 'Bob', last_name: 'Doe', gender: 'male') }
@@ -183,6 +184,16 @@ RSpec.describe 'Api::V1::People', type: :request do
     it 'returns 401 without token' do
       post update_tree_api_v1_people_path, params: { nodes: [] }, as: :json
       expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns 403 for роль user' do
+      plain = create(:user)
+      tok = Warden::JWTAuth::UserEncoder.new.call(plain, :user, nil).first
+      post update_tree_api_v1_people_path,
+           params: { nodes: [] },
+           headers: { 'Authorization' => "Bearer #{tok}" },
+           as: :json
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'persists chart data and returns updated nodes' do
@@ -221,9 +232,20 @@ RSpec.describe 'Api::V1::People', type: :request do
   end
 
   describe 'PATCH /api/v1/people/:id' do
+    let(:user) { create(:user, :moderator) }
     it 'returns 401 without token' do
       patch api_v1_person_path(person.id), params: { person: { first_name: 'Updated' } }, as: :json
       expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns 403 for роль user' do
+      plain = create(:user)
+      tok = Warden::JWTAuth::UserEncoder.new.call(plain, :user, nil).first
+      patch api_v1_person_path(person.id),
+            params: { person: { first_name: 'X', gender: 'male' } },
+            headers: { 'Authorization' => "Bearer #{tok}" },
+            as: :json
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'updates allowed fields and returns serialized person' do

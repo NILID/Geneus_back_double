@@ -6,6 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def index
+        authorize! :read, Idea
         ideas = Idea.order(created_at: :desc).includes(:user)
         render json: {
           ideas: ideas.map { |i| Api::V1::IdeaSerializer.new(i).as_json }
@@ -13,6 +14,7 @@ module Api
       end
 
       def create
+        authorize! :create, Idea
         permitted = params.require(:idea).permit(:body)
         idea = current_user.ideas.build(body: normalize_field(permitted[:body]))
 

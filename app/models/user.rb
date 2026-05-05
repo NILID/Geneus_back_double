@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  ROLES = %w[user moderator admin].freeze
+
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   audited except: %i[
@@ -25,11 +27,24 @@ class User < ApplicationRecord
   has_many :invitations, class_name: 'User', as: :invited_by, dependent: :nullify
 
   validates :person_id, uniqueness: { allow_nil: true }
+  validates :role, inclusion: { in: ROLES }
   validate :linked_person_must_exist
   validate :password_must_meet_complexity_requirements, if: -> { password.present? }
 
   def auth_json
-    { id: id, email: email, person_id: person_id }
+    { id: id, email: email, person_id: person_id, role: role }
+  end
+
+  def moderator?
+    role == 'moderator'
+  end
+
+  def admin?
+    role == 'admin'
+  end
+
+  def genealogy_editor?
+    moderator? || admin?
   end
 
   private

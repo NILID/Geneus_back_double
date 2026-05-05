@@ -8,6 +8,7 @@ module Api
         before_action :set_idea
 
         def index
+          authorize! :read, @idea
           comments = @idea.comments.includes(:user).order(created_at: :asc)
           render json: {
             comments: comments.map { |c| Api::V1::CommentSerializer.new(c).as_json }
@@ -17,6 +18,7 @@ module Api
         def create
           permitted = params.require(:comment).permit(:body)
           comment = @idea.comments.build(user: current_user, body: normalize_field(permitted[:body]))
+          authorize! :create, comment
 
           unless comment.save
             render json: { errors: comment.errors.full_messages }, status: :unprocessable_entity

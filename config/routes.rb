@@ -18,6 +18,9 @@ Rails.application.routes.draw do
       end
       get   'auth/me', to: 'users#show'
       patch 'auth/me', to: 'users#update'
+      namespace :admin do
+        resources :users, only: %i[index update]
+      end
       get 'audits/filter_options', to: 'audits#filter_options'
       resources :audits, only: [:index]
       resources :people, only: %i[show update] do

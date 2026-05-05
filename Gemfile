@@ -44,6 +44,8 @@ gem 'jbuilder', '~> 2.7'
 # Use ActiveStorage variant
 gem 'mini_magick'
 
+gem 'cancancan'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

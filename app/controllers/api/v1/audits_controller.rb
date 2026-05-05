@@ -19,6 +19,7 @@ module Api
       ].freeze
 
       def index
+        authorize! :read, Audited::Audit
         scope = filtered_scope
         total_count = scope.count
         page = [params[:page].to_i, 1].max
@@ -41,6 +42,7 @@ module Api
       end
 
       def filter_options
+        authorize! :read, Audited::Audit
         type_scope = Audited::Audit.where(auditable_type: AUDITABLE_TYPES)
         auditable_types = type_scope.distinct.order(:auditable_type).pluck(:auditable_type)
 

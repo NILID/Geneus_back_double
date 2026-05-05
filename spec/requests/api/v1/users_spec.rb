@@ -23,6 +23,7 @@ RSpec.describe 'Api::V1::Users (session profile)', type: :request do
       expect(json['id']).to eq(user.id)
       expect(json['email']).to eq(user.email)
       expect(json['person_id']).to be_nil
+      expect(json['role']).to eq('user')
     end
 
     it 'includes person_id when set' do

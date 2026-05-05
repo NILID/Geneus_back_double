@@ -7,6 +7,7 @@ module Api
 
       def show
         base = Person.find_for_api!(params[:id])
+        authorize! :read, base
         person = Person.includes(
           tagged_gallery_photos: [:user, :tagged_people, { image_attachment: :blob }]
         ).find(base.id)
@@ -17,6 +18,7 @@ module Api
 
       def update
         person = Person.find_for_api!(params[:id])
+        authorize! :update, person
         if person.update(api_person_attributes)
           render json: { person: Api::V1::PersonSerializer.new(person, request: request).as_json }
         else
@@ -27,6 +29,7 @@ module Api
       end
 
       def map_locations
+        authorize! :read, Person
         people = Person.where('birth_latitude IS NOT NULL OR death_latitude IS NOT NULL')
         render json: {
           people: Api::V1::PersonMapLocationSerializer.collection(people)
@@ -34,6 +37,7 @@ module Api
       end
 
       def recent
+        authorize! :read, Person
         people = Person
           .order(updated_at: :desc)
           .limit(12)
@@ -44,10 +48,12 @@ module Api
       end
 
       def list
+        authorize! :read, Person
         render json: Person.tokens(params[:q])
       end
 
       def family_chart
+        authorize! :read, Person
         people = Person.all.includes(avatar_attachment: [:blob])
         serializer = FamilyChartSerializer.new(people)
 
@@ -59,6 +65,7 @@ module Api
       end
 
       def update_tree
+        authorize! :update_tree, Person
         payload = tree_update_payload
         FamilyChartTreeSync.new(
           nodes: payload[:nodes],

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Audits', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :admin) }
   let!(:person) do
     create(:person, first_name: 'Audit', last_name: 'Target', gender: 'male', chart_id: 'audit-person-1')
   end

@@ -6,6 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def index
+        authorize! :read, GalleryPhoto
         photos = GalleryPhoto
           .order(created_at: :desc)
           .includes(:user, :tagged_people, image_attachment: :blob)
@@ -15,6 +16,7 @@ module Api
       end
 
       def create
+        authorize! :create, GalleryPhoto
         permitted = params.require(:gallery_photo).permit(:caption, :image, :taken_year, person_ids: [])
         raw = params[:gallery_photo]
         photo = current_user.gallery_photos.build(caption: normalize_caption(permitted[:caption]))
@@ -34,7 +36,8 @@ module Api
       end
 
       def update
-        photo = current_user.gallery_photos.find(params[:id])
+        photo = GalleryPhoto.find(params[:id])
+        authorize! :update, photo
         permitted = params.require(:gallery_photo).permit(:caption, :image, :taken_year, person_ids: [])
         raw = params[:gallery_photo]
         if raw.is_a?(ActionController::Parameters) && (raw.key?(:caption) || raw.key?('caption'))
@@ -60,7 +63,8 @@ module Api
       end
 
       def destroy
-        photo = current_user.gallery_photos.find(params[:id])
+        photo = GalleryPhoto.find(params[:id])
+        authorize! :destroy, photo
         photo.destroy!
         head :no_content
       rescue ActiveRecord::RecordNotFound

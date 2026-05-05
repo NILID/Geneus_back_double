@@ -2,7 +2,9 @@
 User.find_or_create_by!(email: 'admin@example.com') do |u|
   u.password = 'Password1!'
   u.password_confirmation = 'Password1!'
+  u.role = 'admin'
 end
+User.find_by(email: 'admin@example.com')&.update(role: 'admin')
 
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).

@@ -75,6 +75,7 @@ GEM
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     byebug (12.0.0)
+    cancancan (3.6.1)
     capybara (3.40.0)
       addressable
       matrix
@@ -327,6 +328,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   bullet
   byebug
+  cancancan
   capybara (>= 2.15)
   coffee-rails (~> 5)
   devise (~> 4.9)

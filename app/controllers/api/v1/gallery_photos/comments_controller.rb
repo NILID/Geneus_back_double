@@ -8,6 +8,7 @@ module Api
         before_action :set_gallery_photo
 
         def index
+          authorize! :read, @gallery_photo
           comments = @gallery_photo.comments.includes(:user).order(created_at: :asc)
           render json: {
             comments: comments.map { |c| Api::V1::CommentSerializer.new(c).as_json }
@@ -17,6 +18,7 @@ module Api
         def create
           permitted = params.require(:comment).permit(:body)
           comment = @gallery_photo.comments.build(user: current_user, body: normalize_field(permitted[:body]))
+          authorize! :create, comment
 
           unless comment.save
             render json: { errors: comment.errors.full_messages }, status: :unprocessable_entity
