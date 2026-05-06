@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Auth::Invitations', type: :request do
-  let(:inviter) { create(:user) }
+  let(:inviter) { create(:user, :moderator) }
 
   def bearer_token_for(user)
     Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
@@ -49,6 +49,24 @@ RSpec.describe 'Api::V1::Auth::Invitations', type: :request do
            params: { user: { email: 'guest@example.com' } },
            as: :json
       expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns 403 when inviter is a plain user' do
+      plain = create(:user)
+      post '/api/v1/auth/invitations',
+           params: { user: { email: 'no_rights@example.com' } },
+           headers: { 'Authorization' => "Bearer #{bearer_token_for(plain)}" },
+           as: :json
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'returns 403 for invitation link when inviter is a plain user' do
+      plain = create(:user)
+      post '/api/v1/auth/invitations/link',
+           params: { user: { email: 'link_denied@example.com' } },
+           headers: { 'Authorization' => "Bearer #{bearer_token_for(plain)}" },
+           as: :json
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'creates an invited user and returns 201' do

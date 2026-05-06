@@ -10,6 +10,8 @@ class Person < ApplicationRecord
 
   has_one_attached :avatar
 
+  validate :acceptable_avatar, if: -> { avatar.attached? }
+
   has_many :partnerships, :dependent => :destroy
   has_many :partners, through: :partnerships, :source => :partner
  
@@ -37,7 +39,7 @@ class Person < ApplicationRecord
 
   has_many :person_facts, dependent: :destroy
 
-  has_one :user, dependent: :nullify
+  has_many :users, dependent: :nullify
 
   accepts_nested_attributes_for :parentship
 
@@ -281,6 +283,17 @@ class Person < ApplicationRecord
   end
 
   private
+
+  def acceptable_avatar
+    allowed = GalleryPhoto::ALLOWED_TYPES
+    unless allowed.include?(avatar.content_type)
+      errors.add(:avatar, 'должен быть JPEG, PNG, WebP или GIF')
+      return
+    end
+
+    max_size = GalleryPhoto::MAX_SIZE
+    errors.add(:avatar, "слишком большой (максимум #{max_size / 1.megabyte} МБ)") if avatar.byte_size > max_size
+  end
 
   def normalize_year_only_date_flags
     self.birth_date_year_only = false if date_of_birth.blank?

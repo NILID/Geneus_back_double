@@ -72,14 +72,17 @@ RSpec.describe 'Api::V1::Users (session profile)', type: :request do
       expect(json['errors']).to be_an(Array)
     end
 
-    it 'rejects when person is already linked to another user' do
+    it 'allows linking the same person as another user' do
       other = create(:user)
       other.update!(person: person)
       patch api_v1_auth_me_path,
             params: { user: { person_id: person.id } },
             headers: { 'Authorization' => "Bearer #{bearer_token}" },
             as: :json
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['person_id']).to eq(person.id)
+      expect(user.reload.person_id).to eq(person.id)
     end
   end
 end

@@ -26,7 +26,6 @@ class User < ApplicationRecord
 
   has_many :invitations, class_name: 'User', as: :invited_by, dependent: :nullify
 
-  validates :person_id, uniqueness: { allow_nil: true }
   validates :role, inclusion: { in: ROLES }
   validate :linked_person_must_exist
   validate :password_must_meet_complexity_requirements, if: -> { password.present? }

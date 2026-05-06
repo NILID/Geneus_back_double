@@ -28,6 +28,7 @@ class Ability
 
     # --- Модератор и администратор: редактирование данных (кроме аудита у модератора) ---
     if user.moderator? || user.admin?
+      can :invite, User
       can :update, Person
       can :update_tree, Person
       can :create, GalleryPhoto

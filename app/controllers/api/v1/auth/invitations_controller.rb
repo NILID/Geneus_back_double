@@ -4,10 +4,15 @@ module Api
   module V1
     module Auth
       class InvitationsController < Devise::InvitationsController
+        include CanCan::ControllerAdditions
+
+        rescue_from CanCan::AccessDenied, with: :render_invitation_forbidden
+
         skip_before_action :verify_authenticity_token, raise: false
         respond_to :json
 
         prepend_before_action :authenticate_inviter!, only: [:create_link]
+        before_action :authorize_inviting!, only: %i[create create_link]
 
         def create_link
           self.resource = resource_class.invite!(invite_params, current_inviter) do |u|
@@ -53,6 +58,19 @@ module Api
         end
 
         private
+
+        def current_ability
+          @current_ability ||= Ability.new(current_user)
+        end
+
+        def authorize_inviting!
+          authorize! :invite, User
+        end
+
+        def render_invitation_forbidden(_exception)
+          render json: { error: 'Forbidden', message: 'Недостаточно прав для приглашений' },
+                 status: :forbidden
+        end
 
         def invitation_accept_url(raw_token)
           base = ENV.fetch('FRONTEND_URL', 'http://localhost:3000').chomp('/')
