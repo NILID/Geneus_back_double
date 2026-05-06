@@ -14,6 +14,16 @@ module Geneus
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
+    # Psych 4 (Ruby 3.1+): YAML в serialized-колонках (в т.ч. audited_changes у audited)
+    # не подгружает Date по умолчанию — без этого PATCH персоны с датами даёт 500.
+    config.active_record.yaml_column_permitted_classes = [
+      Symbol,
+      Date,
+      Time,
+      ActiveSupport::TimeWithZone,
+      ActiveSupport::TimeZone
+    ]
+
     config.hosts << ENV['BACKEND_HOST']
 
     # Settings in config/environments/* take precedence over those specified here.
