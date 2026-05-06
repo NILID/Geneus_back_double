@@ -55,7 +55,7 @@ module Api
       def family_chart
         authorize! :read, Person
         people = Person.all.includes(avatar_attachment: [:blob])
-        serializer = FamilyChartSerializer.new(people)
+        serializer = FamilyChartSerializer.new(people, request: request)
 
         if ActiveModel::Type::Boolean.new.cast(params[:with_connectors])
           render json: { nodes: serializer.nodes, connectors: serializer.connectors }
@@ -73,7 +73,7 @@ module Api
         ).call
 
         people = Person.all.includes(avatar_attachment: [:blob])
-        render json: { ok: true, nodes: FamilyChartSerializer.new(people).nodes }
+        render json: { ok: true, nodes: FamilyChartSerializer.new(people, request: request).nodes }
       rescue FamilyChartTreeSync::Error => e
         render json: { ok: false, errors: [e.message] }, status: :unprocessable_entity
       end

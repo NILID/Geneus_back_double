@@ -1,13 +1,16 @@
 class FamilyChartSerializer
-  def initialize(people = Person.all)
+  def initialize(people = Person.all, request: nil)
     @people = people
+    @request = request
   end
 
   def nodes
     @nodes ||= begin
       people = @people.is_a?(ActiveRecord::Relation) ? @people.to_a : Array(@people)
       index = FamilyChart::RelationshipIndex.new(people)
-      people.map { |person| person.family_chart_node(relationship_index: index) }
+      people.map do |person|
+        person.family_chart_node(relationship_index: index, request: @request)
+      end
     end
   end
 

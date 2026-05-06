@@ -175,11 +175,11 @@ class Person < ApplicationRecord
     chart_id.presence || id.to_s
   end
 
-  def family_chart_node(relationship_index: nil)
+  def family_chart_node(relationship_index: nil, request: nil)
     {
       id: chart_external_id,
       person_id: id,
-      data: family_chart_data,
+      data: family_chart_data(request: request),
       rels: family_chart_relationships(relationship_index: relationship_index)
     }
   end
@@ -201,15 +201,11 @@ class Person < ApplicationRecord
   end
 
   # === Данные для графа семьи — вынести в отдельный класс в будущем ===
-  def family_chart_data
-    if Rails.env.development?
-      Rails.application.routes.default_url_options[:host] = 'localhost:3000'
-    end
-
+  def family_chart_data(request: nil)
     {
       'first name' => first_name,
       'last name' => last_name,
-      'avatar' => avatar.attached? ? Rails.application.routes.url_helpers.url_for(avatar) : nil,
+      'avatar' => family_chart_avatar_url(request: request),
       'gender' => family_chart_gender,
       'birthday' => date_of_birth&.iso8601,
       'death' => date_of_death&.iso8601
@@ -283,6 +279,13 @@ class Person < ApplicationRecord
   end
 
   private
+
+  # Как в Api::V1::PersonSerializer — абсолютный URL от текущего запроса (не глобальный default_url_options).
+  def family_chart_avatar_url(request:)
+    return nil if request.blank? || !avatar.attached?
+
+    request.base_url + rails_blob_path(avatar, only_path: true)
+  end
 
   def acceptable_avatar
     allowed = GalleryPhoto::ALLOWED_TYPES
