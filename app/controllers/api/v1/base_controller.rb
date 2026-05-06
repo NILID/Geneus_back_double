@@ -9,7 +9,18 @@ module Api
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
       rescue_from CanCan::AccessDenied, with: :render_forbidden
 
+      # JSON often contains short-lived Active Storage signed URLs; browsers (especially Safari)
+      # may reuse a cached response and keep expired blob URLs in the SPA.
+      after_action :disable_http_caching_for_json_api
+
       private
+
+      def disable_http_caching_for_json_api
+        return unless response.content_type&.include?('application/json')
+
+        response.set_header('Cache-Control', 'private, no-store, must-revalidate')
+        response.set_header('Pragma', 'no-cache')
+      end
 
       def current_ability
         @current_ability ||= Ability.new(current_user)
