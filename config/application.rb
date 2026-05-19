@@ -15,11 +15,13 @@ module Geneus
     config.load_defaults 6.1
 
     # Psych 4 (Ruby 3.1+): YAML в serialized-колонках (в т.ч. audited_changes у audited)
-    # не подгружает Date по умолчанию — без этого PATCH персоны с датами даёт 500.
+    # не подгружает Date/BigDecimal по умолчанию — без этого PATCH персоны с датами
+    # или координатами (decimal) даёт Psych::DisallowedClass.
     config.active_record.yaml_column_permitted_classes = [
       Symbol,
       Date,
       Time,
+      BigDecimal,
       ActiveSupport::TimeWithZone,
       ActiveSupport::TimeZone
     ]
