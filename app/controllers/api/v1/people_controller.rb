@@ -30,9 +30,11 @@ module Api
 
       def map_locations
         authorize! :read, Person
-        people = Person.where('birth_latitude IS NOT NULL OR death_latitude IS NOT NULL')
+        people = Person
+          .where('birth_latitude IS NOT NULL OR death_latitude IS NOT NULL')
+          .includes(avatar_attachment: :blob)
         render json: {
-          people: Api::V1::PersonMapLocationSerializer.collection(people)
+          people: Api::V1::PersonMapLocationSerializer.collection(people, request: request)
         }
       end
 
