@@ -14,7 +14,7 @@ module Geneus
     end
 
     def yandex_enabled?
-      ENV['YANDEX_DISK_TOKEN'].present?
+      Rails.application.credentials.yandex_disk_token.present?
     end
 
     def resolve(yandex_service, local_service)

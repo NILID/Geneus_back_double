@@ -57,6 +57,26 @@ RSpec.describe YandexDisk::ApiClient do
     end
   end
 
+  describe '#download' do
+    it 'follows redirect from temporary download href' do
+      download_href = 'https://downloader.example/file'
+      file_href = 'https://storage.example/actual-file'
+      stub_request(:get, %r{cloud-api\.yandex\.net/v1/disk/resources/download})
+        .to_return(
+          status: 200,
+          body: { href: download_href, method: 'GET', templated: false }.to_json
+        )
+      stub_request(:get, download_href).to_return(status: 302, headers: { 'Location' => file_href })
+      stub_request(:get, file_href).to_return(status: 200, body: 'image-bytes')
+
+      chunks = []
+      client.download('/geneus/test-key') { |chunk| chunks << chunk }
+
+      expect(chunks.join).to eq('image-bytes')
+      expect(WebMock).to have_requested(:get, file_href).once
+    end
+  end
+
   describe '#download_url' do
     it 'caches download href' do
       href = 'https://downloader.example/file'

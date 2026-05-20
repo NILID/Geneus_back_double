@@ -29,7 +29,7 @@ Rails.application.configure do
   end
 
   config.active_storage.service =
-    ENV['YANDEX_DISK_TOKEN'].present? ? :yandex_disk_photos : :local_photos
+    Rails.application.credentials.yandex_disk_token.present? ? :yandex_disk_photos : :local_photos
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false

@@ -40,7 +40,7 @@ Rails.application.configure do
 
   # Дефолт для вложений без service:; аватары/галерея задают свой сервис в моделях
   config.active_storage.service =
-    ENV['YANDEX_DISK_TOKEN'].present? ? :yandex_disk_photos : :local_photos
+    Rails.application.credentials.yandex_disk_token.present? ? :yandex_disk_photos : :local_photos
 
   # Mount Action Cable outside main process or domain
   # config.action_cable.mount_path = nil

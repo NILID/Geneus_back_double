@@ -144,20 +144,41 @@ module YandexDisk
 
     def get_stream(href, &block)
       uri = URI(href)
-      Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-        request = Net::HTTP::Get.new(uri)
-        http.request(request) do |response|
-          unless response.is_a?(Net::HTTPSuccess)
-            raise ApiError, "Yandex Disk download failed (#{response.code})"
-          end
+      max_redirects = 10
 
-          if block
+      max_redirects.times do
+        redirected = false
+
+        Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+          request = Net::HTTP::Get.new(uri)
+          http.request(request) do |response|
+            if response.is_a?(Net::HTTPRedirection)
+              location = response['location']
+              if location.blank?
+                raise ApiError, "Yandex Disk download redirect without Location (#{response.code})"
+              end
+
+              uri = URI(location)
+              redirected = true
+              next
+            end
+
+            unless response.is_a?(Net::HTTPSuccess)
+              raise ApiError, "Yandex Disk download failed (#{response.code})"
+            end
+
+            return response.read_body unless block
+
             response.read_body(&block)
-          else
-            response.read_body
           end
         end
+
+        return if block_given? && !redirected
+
+        raise ApiError, 'Yandex Disk download failed: too many redirects' unless redirected
       end
+
+      raise ApiError, 'Yandex Disk download failed: too many redirects'
     end
 
     def api_uri(path, params = {})

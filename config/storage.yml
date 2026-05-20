@@ -8,7 +8,7 @@ local:
 
 # Яндекс.Диск (OAuth): https://yandex.com/dev/disk-api/doc/en/concepts/quickstart
 # Общие параметры — в ERB-переменных ниже.
-<% yandex_token = ENV['YANDEX_DISK_TOKEN'] %>
+<% yandex_token = Rails.application.credentials.yandex_disk_token %>
 <% yandex_app_folder = ENV.fetch('YANDEX_DISK_APP_FOLDER', 'true') == 'true' %>
 <% yandex_base_folder = ENV.fetch('YANDEX_DISK_FOLDER', '').to_s.strip %>
 
