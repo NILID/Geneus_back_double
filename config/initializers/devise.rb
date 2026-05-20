@@ -31,7 +31,7 @@ Devise.setup do |config|
 
   config.jwt do |jwt|
     jwt.secret = if Rails.env.production?
-                   ENV.fetch('DEVISE_JWT_SECRET_KEY')
+                   Rails.application.credentials.prod[:devise][:jwt_secret_key]
                  else
                    ENV.fetch('DEVISE_JWT_SECRET_KEY') { Rails.application.secret_key_base }
                  end
