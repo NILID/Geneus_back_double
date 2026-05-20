@@ -8,6 +8,7 @@ default: &default
   adapter: postgresql
   enconding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: 5432
   timeout: 5000
 
 development:
@@ -27,6 +28,7 @@ test:
 
 production:
   <<: *default
+  host: <%= Rails.application.credentials.prod[:db][:host] %>
   database: <%= Rails.application.credentials.prod[:db][:database] %>
   username: <%= Rails.application.credentials.prod[:db][:username] %>
   password: <%= Rails.application.credentials.prod[:db][:password] %>
