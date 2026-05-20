@@ -8,7 +8,7 @@ class Person < ApplicationRecord
 
   before_validation :normalize_year_only_date_flags
 
-  has_one_attached :avatar
+  has_one_attached :avatar, service: Geneus::ActiveStorageServices.avatar
 
   validate :acceptable_avatar, if: -> { avatar.attached? }
 

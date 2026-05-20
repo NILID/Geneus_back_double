@@ -39,6 +39,12 @@ It is conspicuously missing:
     rake db:migrate
     rails server
 
+### Фото на Яндекс.Диске (опционально)
+
+Active Storage хранит **аватары** и **фото галереи** раздельно: `avatars/` и `photos/` (локально `storage/avatars`, `storage/photos`; на Диске `app:/…/avatars`, `app:/…/photos`).
+В [oauth.yandex.com](https://oauth.yandex.com/) — право «Доступ к папке приложения», `YANDEX_DISK_TOKEN`, `YANDEX_DISK_APP_FOLDER=true`.
+Общий префикс: `YANDEX_DISK_FOLDER` (например `geneus` → `app:/geneus/avatars/…`). См. `.env.production.example`.
+
 ## Bugs?
 
 If you find a bug please add an [issue on GitHub](https://github.com/NILID/Geneus/issues) or fork the project and send a pull request.

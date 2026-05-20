@@ -6,6 +6,39 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
+# Яндекс.Диск (OAuth): https://yandex.com/dev/disk-api/doc/en/concepts/quickstart
+# Общие параметры — в ERB-переменных ниже.
+<% yandex_token = ENV['YANDEX_DISK_TOKEN'] %>
+<% yandex_app_folder = ENV.fetch('YANDEX_DISK_APP_FOLDER', 'true') == 'true' %>
+<% yandex_base_folder = ENV.fetch('YANDEX_DISK_FOLDER', '').to_s.strip %>
+
+local_avatars:
+  service: Disk
+  root: <%= Rails.root.join("storage/avatars") %>
+
+local_photos:
+  service: Disk
+  root: <%= Rails.root.join("storage/photos") %>
+
+yandex_disk_avatars:
+  service: YandexDisk
+  access_token: <%= yandex_token %>
+  app_folder: <%= yandex_app_folder %>
+  folder: <%= [yandex_base_folder, 'avatars'].reject(&:empty?).join('/') %>
+
+yandex_disk_photos:
+  service: YandexDisk
+  access_token: <%= yandex_token %>
+  app_folder: <%= yandex_app_folder %>
+  folder: <%= [yandex_base_folder, 'photos'].reject(&:empty?).join('/') %>
+
+# Старые blob'ы (до разделения на avatars/photos)
+yandex_disk:
+  service: YandexDisk
+  access_token: <%= yandex_token %>
+  app_folder: <%= yandex_app_folder %>
+  folder: <%= yandex_base_folder.presence || 'geneus' %>
+
 # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
 #   service: S3
