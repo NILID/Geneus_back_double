@@ -9,7 +9,7 @@ module Api
         base = Person.find_for_api!(params[:id])
         authorize! :read, base
         person = Person.includes(
-          tagged_gallery_photos: [:user, :tagged_people, { image_attachment: :blob }]
+          tagged_gallery_photos: [:user, { gallery_photo_person_tags: :person }, { image_attachment: :blob }]
         ).find(base.id)
         render json: { person: Api::V1::PersonSerializer.new(person, request: request).as_json }
       rescue ActiveRecord::RecordNotFound

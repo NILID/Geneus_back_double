@@ -186,6 +186,52 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(json['gallery_photo']['tagged_people'].map { |h| h['id'] }).to eq([tag_person.id])
     end
 
+    it 'updates person_tags with region coordinates' do
+      photo = create(:gallery_photo, user: user)
+      patch api_v1_gallery_photo_path(photo),
+            params: {
+              gallery_photo: {
+                person_tags: [
+                  {
+                    person_id: tag_person.id,
+                    region_x: 0.1,
+                    region_y: 0.2,
+                    region_width: 0.3,
+                    region_height: 0.4
+                  }
+                ]
+              }
+            },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      tag = photo.reload.gallery_photo_person_tags.find_by!(person_id: tag_person.id)
+      expect(tag.region_x.to_f).to be_within(0.0001).of(0.1)
+      expect(tag.region_y.to_f).to be_within(0.0001).of(0.2)
+      expect(tag.region_width.to_f).to be_within(0.0001).of(0.3)
+      expect(tag.region_height.to_f).to be_within(0.0001).of(0.4)
+      json = JSON.parse(response.body)
+      region = json['gallery_photo']['tagged_people'][0]['region']
+      expect(region).to include('x' => 0.1, 'y' => 0.2, 'width' => 0.3, 'height' => 0.4)
+    end
+
+    it 'returns 422 for invalid region coordinates' do
+      photo = create(:gallery_photo, user: user)
+      patch api_v1_gallery_photo_path(photo),
+            params: {
+              gallery_photo: {
+                person_tags: [
+                  { person_id: tag_person.id, region_x: 0.9, region_y: 0.9, region_width: 0.5, region_height: 0.5 }
+                ]
+              }
+            },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
     it 'updates taken_year for own photo' do
       photo = create(:gallery_photo, user: user)
       patch api_v1_gallery_photo_path(photo),

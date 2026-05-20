@@ -25,16 +25,27 @@ module Api
       private
 
       def tagged_people_json
-        @gallery_photo.tagged_people.map { |p| person_tag_summary(p) }
+        tags = @gallery_photo.gallery_photo_person_tags
+        tags.map { |tag| person_tag_summary(tag) }
       end
 
-      def person_tag_summary(person)
-        {
+      def person_tag_summary(tag)
+        person = tag.person
+        summary = {
           id: person.id,
           chart_external_id: person.chart_external_id,
           first_name: person.first_name,
           last_name: person.last_name
         }
+        if tag.region?
+          summary[:region] = {
+            x: tag.region_x.to_f,
+            y: tag.region_y.to_f,
+            width: tag.region_width.to_f,
+            height: tag.region_height.to_f
+          }
+        end
+        summary
       end
 
       def image_url

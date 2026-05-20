@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_05_06_100000) do
+ActiveRecord::Schema.define(version: 2026_05_20_120000) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -78,6 +78,10 @@ ActiveRecord::Schema.define(version: 2026_05_06_100000) do
     t.integer "person_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.decimal "region_x", precision: 8, scale: 6
+    t.decimal "region_y", precision: 8, scale: 6
+    t.decimal "region_width", precision: 8, scale: 6
+    t.decimal "region_height", precision: 8, scale: 6
     t.index ["gallery_photo_id", "person_id"], name: "index_gallery_photo_person_tags_unique_pair", unique: true
     t.index ["gallery_photo_id"], name: "index_gallery_photo_person_tags_on_gallery_photo_id"
     t.index ["person_id"], name: "index_gallery_photo_person_tags_on_person_id"
@@ -123,6 +127,8 @@ ActiveRecord::Schema.define(version: 2026_05_06_100000) do
   end
 
   create_table "people", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
     t.string "gender"
     t.text "bio"
     t.date "date_of_birth"
@@ -132,8 +138,6 @@ ActiveRecord::Schema.define(version: 2026_05_06_100000) do
     t.string "location_of_birth"
     t.string "location_of_death"
     t.string "chart_id"
-    t.string "first_name"
-    t.string "last_name"
     t.decimal "birth_latitude", precision: 10, scale: 7
     t.decimal "birth_longitude", precision: 10, scale: 7
     t.decimal "death_latitude", precision: 10, scale: 7
