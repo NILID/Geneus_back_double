@@ -372,6 +372,7 @@ RSpec.describe 'Api::V1::People', type: :request do
       expect(person.avatar.attached?).to be true
       json = JSON.parse(response.body)
       expect(json['person']['avatar_url']).to be_present
+      expect(json['person']['avatar_url']).to include('/rails/active_storage/blobs/proxy/')
     end
   end
 end

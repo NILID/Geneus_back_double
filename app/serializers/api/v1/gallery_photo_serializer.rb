@@ -49,12 +49,7 @@ module Api
       end
 
       def image_url
-        return nil if @request.blank? || !@gallery_photo.image.attached?
-
-        @request.base_url + Rails.application.routes.url_helpers.rails_blob_path(
-          @gallery_photo.image,
-          only_path: true
-        )
+        Geneus::BlobPublicPath.url(@gallery_photo.image, request: @request)
       end
     end
   end

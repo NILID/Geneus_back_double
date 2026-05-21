@@ -282,9 +282,7 @@ class Person < ApplicationRecord
 
   # Как в Api::V1::PersonSerializer — абсолютный URL от текущего запроса (не глобальный default_url_options).
   def family_chart_avatar_url(request:)
-    return nil if request.blank? || !avatar.attached?
-
-    request.base_url + rails_blob_path(avatar, only_path: true)
+    Geneus::BlobPublicPath.url(avatar, request: request)
   end
 
   def acceptable_avatar

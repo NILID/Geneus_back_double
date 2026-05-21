@@ -30,6 +30,7 @@ Rails.application.configure do
 
   config.active_storage.service =
     Rails.application.credentials.yandex_disk_token.present? ? :yandex_disk_photos : :local_photos
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false

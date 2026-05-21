@@ -41,6 +41,8 @@ Rails.application.configure do
   # Дефолт для вложений без service:; аватары/галерея задают свой сервис в моделях
   config.active_storage.service =
     Rails.application.credentials.yandex_disk_token.present? ? :yandex_disk_photos : :local_photos
+  # Для url_for(attachment); сериализаторы используют Geneus::BlobPublicPath (rails_storage_proxy_path).
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Mount Action Cable outside main process or domain
   # config.action_cable.mount_path = nil

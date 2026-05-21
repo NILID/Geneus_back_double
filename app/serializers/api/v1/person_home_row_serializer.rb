@@ -22,12 +22,7 @@ module Api
       private
 
       def avatar_url
-        return nil if @request.blank? || !@person.avatar.attached?
-
-        @request.base_url + Rails.application.routes.url_helpers.rails_blob_path(
-          @person.avatar,
-          only_path: true
-        )
+        Geneus::BlobPublicPath.url(@person.avatar, request: @request)
       end
     end
   end
