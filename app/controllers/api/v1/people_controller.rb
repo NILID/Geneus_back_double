@@ -49,6 +49,14 @@ module Api
         }
       end
 
+      def upcoming_birthdays
+        authorize! :read, Person
+        rows = PersonUpcomingBirthdays.call
+        render json: {
+          birthdays: rows.map { |row| Api::V1::PersonBirthdaySerializer.new(row, request: request).as_json }
+        }
+      end
+
       def list
         authorize! :read, Person
         render json: Person.tokens(params[:q])

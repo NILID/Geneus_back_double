@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::People', type: :request do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:user) { create(:user) }
   let!(:person) do
     create(:person, first_name: 'Api', last_name: 'Person', gender: 'male', chart_id: 'chart-xyz')
@@ -130,6 +132,79 @@ RSpec.describe 'Api::V1::People', type: :request do
       expect(first['first_name']).to eq('Newer')
       expect(first['chart_external_id']).to be_a(String)
       expect(first['updated_at']).to be_present
+    end
+  end
+
+  describe 'GET /api/v1/people/upcoming_birthdays' do
+    before do
+      person.update!(date_of_birth: Date.new(1900, 3, 1), date_of_death: nil)
+    end
+
+    it 'returns 401 without token' do
+      get upcoming_birthdays_api_v1_people_path
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns birthdays in the window with age and deceased flag' do
+      travel_to Date.new(2026, 5, 22) do
+        alive = create(
+          :person,
+          first_name: 'Today',
+          gender: 'male',
+          date_of_birth: Date.new(1990, 5, 22),
+          date_of_death: nil
+        )
+        gone = create(
+          :person,
+          first_name: 'Yesterday',
+          gender: 'female',
+          date_of_birth: Date.new(1950, 5, 21),
+          date_of_death: Date.new(2010, 1, 1)
+        )
+        create(
+          :person,
+          first_name: 'YearOnly',
+          gender: 'male',
+          date_of_birth: Date.new(1920, 5, 22),
+          birth_date_year_only: true
+        )
+
+        get upcoming_birthdays_api_v1_people_path,
+            headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        list = json['birthdays']
+        expect(list.length).to eq(2)
+
+        today_row = list.find { |r| r['first_name'] == 'Today' }
+        expect(today_row['days_offset']).to eq(0)
+        expect(today_row['age']).to eq(36)
+        expect(today_row['deceased']).to be false
+
+        yesterday_row = list.find { |r| r['first_name'] == 'Yesterday' }
+        expect(yesterday_row['days_offset']).to eq(-1)
+        expect(yesterday_row['age']).to eq(76)
+        expect(yesterday_row['deceased']).to be true
+      end
+    end
+
+    it 'returns empty list when no birthdays in range' do
+      travel_to Date.new(2026, 1, 10) do
+        create(
+          :person,
+          first_name: 'Summer',
+          gender: 'male',
+          date_of_birth: Date.new(1980, 7, 15)
+        )
+
+        get upcoming_birthdays_api_v1_people_path,
+            headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json['birthdays']).to eq([])
+      end
     end
   end
 

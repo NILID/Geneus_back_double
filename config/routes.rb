@@ -27,6 +27,7 @@ Rails.application.routes.draw do
         collection do
           get :map_locations
           get :recent
+          get :upcoming_birthdays
           get :list
           get :family_chart
           post :update_tree
