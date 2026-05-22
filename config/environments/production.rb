@@ -97,8 +97,8 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.smtp_settings = {
-      :address              => Rails.application.credentials.smtp,
-      :domain               => Rails.application.credentials.domain,
+      :address              => Rails.application.credentials.mail_smtp,
+      :domain               => Rails.application.credentials.mail_domain,
       :port                 => 25,
       :enable_starttls_auto => true,
       :authentication       => :login,
