@@ -40,6 +40,7 @@ class Ability
     # --- Только администратор ---
     return unless user.admin?
 
+    can :destroy, Idea
     can :read, Audited::Audit
     can :read, User
     can :update_role, User

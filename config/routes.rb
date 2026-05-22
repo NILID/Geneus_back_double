@@ -36,7 +36,7 @@ Rails.application.routes.draw do
       resources :gallery_photos, only: %i[index create update destroy] do
         resources :comments, only: %i[index create], module: :gallery_photos
       end
-      resources :ideas, only: %i[index create] do
+      resources :ideas, only: %i[index create destroy] do
         resources :comments, only: %i[index create], module: :ideas
       end
     end

@@ -71,4 +71,52 @@ RSpec.describe 'Api::V1::Ideas', type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe 'DELETE /api/v1/ideas/:id' do
+    let(:idea) { create(:idea, user: other_user, body: 'Идея на удаление') }
+
+    it 'returns 401 without token' do
+      delete api_v1_idea_path(idea)
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns 403 for a plain user' do
+      create(:comment, commentable: idea, user: user, body: 'Комментарий')
+      expect do
+        delete api_v1_idea_path(idea),
+               headers: { 'Authorization' => "Bearer #{bearer_token}" }
+      end.not_to change(Idea, :count)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(idea.reload.comments.count).to eq(1)
+    end
+
+    it 'returns 403 for a moderator' do
+      moderator = create(:user, :moderator)
+      delete api_v1_idea_path(idea),
+             headers: { 'Authorization' => "Bearer #{bearer_token(moderator)}" }
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'deletes the idea and its comments for an admin' do
+      admin = create(:user, :admin)
+      create(:comment, commentable: idea, user: user, body: 'Комментарий')
+
+      expect do
+        delete api_v1_idea_path(idea),
+               headers: { 'Authorization' => "Bearer #{bearer_token(admin)}" }
+      end.to change(Idea, :count).by(-1).and change(Comment, :count).by(-1)
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'returns 404 for a missing idea' do
+      admin = create(:user, :admin)
+      delete api_v1_idea_path(0),
+             headers: { 'Authorization' => "Bearer #{bearer_token(admin)}" }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

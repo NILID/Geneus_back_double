@@ -28,6 +28,13 @@ module Api
         }, status: :created
       end
 
+      def destroy
+        idea = Idea.find(params[:id])
+        authorize! :destroy, idea
+        idea.destroy!
+        head :no_content
+      end
+
       private
 
       def normalize_field(value)
