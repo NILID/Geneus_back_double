@@ -42,7 +42,7 @@ module Api
         authorize! :read, Person
         people = Person
           .order(updated_at: :desc)
-          .limit(12)
+          .limit(6)
           .includes(avatar_attachment: :blob)
         render json: {
           people: people.map { |p| Api::V1::PersonHomeRowSerializer.new(p, request: request).as_json }
