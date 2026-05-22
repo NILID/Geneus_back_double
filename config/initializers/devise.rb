@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Devise.setup do |config|
-  config.mailer_sender = ENV.fetch('MAILER_SENDER', 'please-change-me@example.com')
+  config.mailer_sender = ENV.fetch('MAILER_SENDER', Rails.application.credentials.mail_email)
 
   config.case_insensitive_keys = [:email]
   config.strip_whitespace_keys = [:email]
