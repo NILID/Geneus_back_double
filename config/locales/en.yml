@@ -35,3 +35,5 @@ en:
     mailer:
       invitation_instructions:
         subject: "Invitation to the family tree site"
+      reset_password_instructions:
+        subject: "Сброс пароля на сайте семейной хроники"
