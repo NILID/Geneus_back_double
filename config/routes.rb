@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       end
       get   'auth/me', to: 'users#show'
       patch 'auth/me', to: 'users#update'
+      get 'home/stats', to: 'home#stats'
       namespace :admin do
         resources :users, only: %i[index update]
       end
