@@ -19,7 +19,10 @@ module Api
       def update
         person = Person.find_for_api!(params[:id])
         authorize! :update, person
-        if person.update(api_person_attributes)
+        attrs = api_person_attributes
+        remove_avatar = ActiveModel::Type::Boolean.new.cast(attrs.delete(:remove_avatar))
+        person.avatar.purge if remove_avatar && person.avatar.attached?
+        if person.update(attrs)
           render json: { person: Api::V1::PersonSerializer.new(person, request: request).as_json }
         else
           render json: { errors: person.errors.full_messages }, status: :unprocessable_entity
@@ -107,6 +110,7 @@ module Api
           :death_latitude,
           :death_longitude,
           :avatar,
+          :remove_avatar,
           { parentship_attributes: %i[id father_id mother_id] },
           partner_ids: []
         )

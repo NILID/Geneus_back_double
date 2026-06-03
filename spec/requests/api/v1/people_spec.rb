@@ -449,5 +449,32 @@ RSpec.describe 'Api::V1::People', type: :request do
       expect(json['person']['avatar_url']).to be_present
       expect(json['person']['avatar_url']).to include('/rails/active_storage/blobs/proxy/')
     end
+
+    it 'removes avatar when remove_avatar is true' do
+      png = Rack::Test::UploadedFile.new(
+        Rails.root.join('spec/fixtures/files/1x1.png'),
+        'image/png'
+      )
+      person.avatar.attach(io: File.open(png.path), filename: '1x1.png', content_type: 'image/png')
+      expect(person.avatar.attached?).to be true
+
+      patch api_v1_person_path(person.id),
+            params: {
+              person: {
+                first_name: person.first_name,
+                last_name: person.last_name,
+                gender: person.gender,
+                remove_avatar: true
+              }
+            },
+            headers: { 'Authorization' => "Bearer #{bearer_token}" },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      person.reload
+      expect(person.avatar.attached?).to be false
+      json = JSON.parse(response.body)
+      expect(json['person']['avatar_url']).to be_nil
+    end
   end
 end
