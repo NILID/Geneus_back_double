@@ -3,6 +3,7 @@
 module Api
   module V1
     class BaseController < ActionController::API
+      include Pagy::Backend
       include Devise::Controllers::Helpers
       include CanCan::ControllerAdditions
 

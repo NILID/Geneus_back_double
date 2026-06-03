@@ -8,6 +8,8 @@ gem 'rails', '~> 6.1'
 
 gem 'pg'
 
+gem 'pagy'
+
 gem 'audited'
 
 # Use Puma as the app server

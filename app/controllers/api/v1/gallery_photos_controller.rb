@@ -7,11 +7,18 @@ module Api
 
       def index
         authorize! :read, GalleryPhoto
-        photos = GalleryPhoto
+        scope = GalleryPhoto
           .order(created_at: :desc)
           .includes(:user, gallery_photo_person_tags: :person, image_attachment: :blob)
+        pagy, photos = pagy(scope, page: gallery_page_param, limit: gallery_per_page_param)
         render json: {
-          gallery_photos: photos.map { |p| Api::V1::GalleryPhotoSerializer.new(p, request: request).as_json }
+          gallery_photos: photos.map { |p| Api::V1::GalleryPhotoSerializer.new(p, request: request).as_json },
+          meta: {
+            page: pagy.page,
+            per_page: pagy.limit,
+            total_count: pagy.count,
+            total_pages: pagy.pages
+          }
         }
       end
 
@@ -76,6 +83,17 @@ module Api
       end
 
       private
+
+      def gallery_page_param
+        [params[:page].to_i, 1].max
+      end
+
+      def gallery_per_page_param
+        raw = params[:per_page].to_i
+        return Pagy::DEFAULT[:limit] unless raw.positive?
+
+        [[raw, Pagy::DEFAULT[:max_limit]].min, 1].max
+      end
 
       def permit_gallery_photo_params
         params.require(:gallery_photo).permit(

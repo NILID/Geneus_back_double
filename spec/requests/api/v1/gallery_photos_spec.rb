@@ -17,7 +17,7 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it 'returns all users photos with image_url and uploader' do
+    it 'returns paginated photos with image_url, uploader and meta' do
       mine = create(:gallery_photo, user: user, caption: 'A')
       theirs = create(:gallery_photo, user: other_user, caption: 'B')
       get api_v1_gallery_photos_path, headers: { 'Authorization' => "Bearer #{bearer_token}" }
@@ -33,6 +33,29 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
       expect(mine_json['image_url']).to be_present
       expect(mine_json['tagged_people']).to eq([])
       expect(mine_json['comments_count']).to eq(0)
+      expect(json['meta']).to include(
+        'page' => 1,
+        'per_page' => 10,
+        'total_count' => 2,
+        'total_pages' => 1
+      )
+    end
+
+    it 'returns a single page when per_page is set' do
+      3.times { |i| create(:gallery_photo, user: user, caption: "P#{i}") }
+      get api_v1_gallery_photos_path,
+          params: { page: 2, per_page: 2 },
+          headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['gallery_photos'].length).to eq(1)
+      expect(json['meta']).to include(
+        'page' => 2,
+        'per_page' => 2,
+        'total_count' => 3,
+        'total_pages' => 2
+      )
     end
   end
 
