@@ -49,8 +49,10 @@ module Api
             id: u.id,
             email: u.email,
             role: u.role,
-            person_id: u.person_id
+            person_id: u.person_id,
+            last_seen_at: u.last_seen_at&.iso8601
           }
+
         end
       end
     end

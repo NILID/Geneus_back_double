@@ -10,8 +10,10 @@ module Api
         private
 
         def respond_with(resource, _opts = {})
+          resource.touch_last_seen!(force: true)
           render json: user_json(resource), status: :ok
         end
+
 
         def respond_to_on_destroy
           head :no_content

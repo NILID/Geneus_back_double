@@ -6,6 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def show
+        current_user.touch_last_seen!
         render json: current_user.auth_json
       end
 

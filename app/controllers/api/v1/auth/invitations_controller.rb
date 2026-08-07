@@ -50,8 +50,10 @@ module Api
           if resource.errors.empty?
             resource.after_database_authentication if resource.respond_to?(:after_database_authentication)
             sign_in(resource_name, resource)
+            resource.touch_last_seen!(force: true)
             render json: resource.auth_json, status: :ok
           else
+
             resource.invitation_token = raw_invitation_token if raw_invitation_token.present?
             render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
           end

@@ -32,6 +32,23 @@ RSpec.describe 'Api::V1::Users (session profile)', type: :request do
       json = JSON.parse(response.body)
       expect(json['person_id']).to eq(person.id)
     end
+
+    it 'records last_seen_at and throttles repeats within 10 minutes' do
+      expect(user.last_seen_at).to be_nil
+
+      get api_v1_auth_me_path, headers: { 'Authorization' => "Bearer #{bearer_token}" }
+      expect(response).to have_http_status(:ok)
+      first_seen = user.reload.last_seen_at
+      expect(first_seen).to be_within(2.seconds).of(Time.current)
+
+      get api_v1_auth_me_path, headers: { 'Authorization' => "Bearer #{bearer_token}" }
+      expect(user.reload.last_seen_at).to eq(first_seen)
+
+      travel 11.minutes do
+        get api_v1_auth_me_path, headers: { 'Authorization' => "Bearer #{bearer_token}" }
+        expect(user.reload.last_seen_at).to be > first_seen
+      end
+    end
   end
 
   describe 'PATCH /api/v1/auth/me' do

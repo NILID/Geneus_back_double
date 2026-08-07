@@ -5,11 +5,14 @@ class User < ApplicationRecord
 
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
+  LAST_SEEN_THROTTLE = 10.minutes
+
   audited except: %i[
     encrypted_password
     reset_password_token
     jti
     invitation_token
+    last_seen_at
   ]
 
   belongs_to :person, optional: true
@@ -44,6 +47,12 @@ class User < ApplicationRecord
 
   def genealogy_editor?
     moderator? || admin?
+  end
+
+  def touch_last_seen!(force: false)
+    return if !force && last_seen_at.present? && last_seen_at > LAST_SEEN_THROTTLE.ago
+
+    update_column(:last_seen_at, Time.current)
   end
 
   private
