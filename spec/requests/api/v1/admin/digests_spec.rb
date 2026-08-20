@@ -17,19 +17,21 @@ RSpec.describe 'Api::V1::Admin::Digests', type: :request do
       expect(ActionMailer::Base.deliveries).to be_empty
     end
 
-    it 'sends the digest to all admins' do
-      other_admin = create(:user, :admin, email: "other-#{SecureRandom.hex(6)}@example.com")
+    it 'sends the digest only to the current admin' do
+      create(:user, :admin, email: "other-#{SecureRandom.hex(6)}@example.com")
+      create(:user, email: "member-#{SecureRandom.hex(6)}@example.com")
       post api_v1_admin_digest_path, headers: { 'Authorization' => "Bearer #{token_for(admin)}" }
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
-      expect(json['sent']).to eq(2)
-      expect(json['recipients']).to contain_exactly(admin.email, other_admin.email)
+      expect(json['sent']).to eq(1)
+      expect(json['recipients']).to eq([admin.email])
       expect(json['counts']).to include(
         'birthdays' => a_kind_of(Integer),
         'new_people' => a_kind_of(Integer),
         'photos' => a_kind_of(Integer)
       )
-      expect(ActionMailer::Base.deliveries.size).to eq(2)
+      expect(ActionMailer::Base.deliveries.size).to eq(1)
+      expect(ActionMailer::Base.deliveries.last.to).to eq([admin.email])
     end
   end
 end

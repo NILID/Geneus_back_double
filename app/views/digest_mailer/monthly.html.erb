@@ -57,6 +57,7 @@
               </td>
             </tr>
 
+            <% unless payload.birthdays.empty? %>
             <tr>
               <td style="padding:0 32px 8px 32px;">
                 <%= render 'digest_mailer/section_title', title: 'Дни рождения', subtitle: 'на ближайший месяц', accent: '#b56a3a' %>
@@ -64,30 +65,28 @@
             </tr>
             <tr>
               <td style="padding:0 32px 24px 32px;">
-                <% if payload.birthdays.empty? %>
-                  <%= render 'digest_mailer/empty_note', text: 'В ближайший месяц дней рождения нет.' %>
-                <% else %>
-                  <% payload.birthdays.each do |item| %>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;background-color:#fff7ee;border:1px solid #edd9c4;">
-                      <tr>
-                        <td width="64" valign="top" style="padding:10px;">
-                          <%= render 'digest_mailer/thumb', url: item.avatar_url, alt: item.name, fallback: item.name.to_s.first %>
-                        </td>
-                        <td valign="middle" style="padding:10px 12px 10px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
-                          <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
-                          <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
-                            <%= AdminDigest::Format.date(item.occurrence_date) %>
-                            · <%= item.days_offset.zero? ? 'сегодня' : (item.days_offset == 1 ? 'завтра' : "через #{AdminDigest::Format.days_after(item.days_offset)}") %>
-                            · исполнится <%= AdminDigest::Format.years(item.age) %>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  <% end %>
+                <% payload.birthdays.each do |item| %>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;background-color:#fff7ee;border:1px solid #edd9c4;">
+                    <tr>
+                      <td width="64" valign="top" style="padding:10px;">
+                        <%= render 'digest_mailer/thumb', url: item.avatar_url, alt: item.name, fallback: item.name.to_s.first %>
+                      </td>
+                      <td valign="middle" style="padding:10px 12px 10px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
+                        <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
+                        <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
+                          <%= AdminDigest::Format.date(item.occurrence_date) %>
+                          · <%= item.days_offset.zero? ? 'сегодня' : (item.days_offset == 1 ? 'завтра' : "через #{AdminDigest::Format.days_after(item.days_offset)}") %>
+                          · исполнится <%= AdminDigest::Format.years(item.age) %>
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
                 <% end %>
               </td>
             </tr>
+            <% end %>
 
+            <% unless payload.new_people.empty? %>
             <tr>
               <td style="padding:0 32px 8px 32px;">
                 <%= render 'digest_mailer/section_title', title: 'Новые персоны', subtitle: 'добавлены за месяц', accent: '#4a6741' %>
@@ -95,29 +94,27 @@
             </tr>
             <tr>
               <td style="padding:0 32px 24px 32px;">
-                <% if payload.new_people.empty? %>
-                  <%= render 'digest_mailer/empty_note', text: 'Новых персон за месяц не было.' %>
-                <% else %>
-                  <% payload.new_people.each do |item| %>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;border-bottom:1px solid #eee4d6;">
-                      <tr>
-                        <td width="56" valign="top" style="padding:8px 8px 8px 0;">
-                          <%= render 'digest_mailer/thumb', url: item.avatar_url, alt: item.name, fallback: item.name.to_s.first, size: 48 %>
-                        </td>
-                        <td valign="middle" style="padding:8px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
-                          <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
-                          <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
-                            <%= AdminDigest::Format.datetime(item.occurred_at) %>
-                            <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  <% end %>
+                <% payload.new_people.each do |item| %>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;border-bottom:1px solid #eee4d6;">
+                    <tr>
+                      <td width="56" valign="top" style="padding:8px 8px 8px 0;">
+                        <%= render 'digest_mailer/thumb', url: item.avatar_url, alt: item.name, fallback: item.name.to_s.first, size: 48 %>
+                      </td>
+                      <td valign="middle" style="padding:8px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
+                        <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
+                        <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
+                          <%= AdminDigest::Format.datetime(item.occurred_at) %>
+                          <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
                 <% end %>
               </td>
             </tr>
+            <% end %>
 
+            <% unless payload.updated_people.empty? %>
             <tr>
               <td style="padding:0 32px 8px 32px;">
                 <%= render 'digest_mailer/section_title', title: 'Изменения персон', subtitle: 'что поменялось', accent: '#4a6741' %>
@@ -125,41 +122,39 @@
             </tr>
             <tr>
               <td style="padding:0 32px 24px 32px;">
-                <% if payload.updated_people.empty? %>
-                  <%= render 'digest_mailer/empty_note', text: 'Изменений карточек за месяц не было.' %>
-                <% else %>
-                  <% payload.updated_people.each do |item| %>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px 0;background-color:#f7f3ea;border:1px solid #e6dcc8;">
-                      <tr>
-                        <td width="56" valign="top" style="padding:10px;">
-                          <%= render 'digest_mailer/thumb', url: item.avatar_url, alt: item.name, fallback: item.name.to_s.first, size: 48 %>
-                        </td>
-                        <td valign="top" style="padding:10px 12px 10px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
-                          <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
-                          <p style="margin:4px 0 8px 0;font-size:13px;color:#7a6e62;">
-                            <%= AdminDigest::Format.datetime(item.occurred_at) %>
-                            <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
-                          </p>
-                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                            <% item.changes.each do |change| %>
-                              <tr>
-                                <td style="padding:0 0 6px 0;font-size:13px;line-height:1.4;color:#2c241c;">
-                                  <strong><%= change.label %>:</strong>
-                                  <span style="color:#9a6b5a;text-decoration:line-through;"><%= change.old_value %></span>
-                                  →
-                                  <span style="color:#3d5a36;"><%= change.new_value %></span>
-                                </td>
-                              </tr>
-                            <% end %>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                  <% end %>
+                <% payload.updated_people.each do |item| %>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px 0;background-color:#f7f3ea;border:1px solid #e6dcc8;">
+                    <tr>
+                      <td width="56" valign="top" style="padding:10px;">
+                        <%= render 'digest_mailer/thumb', url: item.avatar_url, alt: item.name, fallback: item.name.to_s.first, size: 48 %>
+                      </td>
+                      <td valign="top" style="padding:10px 12px 10px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
+                        <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
+                        <p style="margin:4px 0 8px 0;font-size:13px;color:#7a6e62;">
+                          <%= AdminDigest::Format.datetime(item.occurred_at) %>
+                          <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
+                        </p>
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                          <% item.changes.each do |change| %>
+                            <tr>
+                              <td style="padding:0 0 6px 0;font-size:13px;line-height:1.4;color:#2c241c;">
+                                <strong><%= change.label %>:</strong>
+                                <span style="color:#9a6b5a;text-decoration:line-through;"><%= change.old_value %></span>
+                                →
+                                <span style="color:#3d5a36;"><%= change.new_value %></span>
+                              </td>
+                            </tr>
+                          <% end %>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
                 <% end %>
               </td>
             </tr>
+            <% end %>
 
+            <% unless payload.photos.empty? %>
             <tr>
               <td style="padding:0 32px 8px 32px;">
                 <%= render 'digest_mailer/section_title', title: 'Фотографии', subtitle: 'галерея за месяц', accent: '#6a4a7a' %>
@@ -167,49 +162,47 @@
             </tr>
             <tr>
               <td style="padding:0 32px 24px 32px;">
-                <% if payload.photos.empty? %>
-                  <%= render 'digest_mailer/empty_note', text: 'Новых или изменённых фото за месяц не было.' %>
-                <% else %>
-                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                    <% payload.photos.each_slice(2) do |row_items| %>
-                      <tr>
-                        <% row_items.each do |item| %>
-                          <td width="50%" valign="top" style="padding:0 6px 12px 0;">
-                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #e6dcc8;">
-                              <tr>
-                                <td style="padding:0;background-color:#efe6d8;">
-                                  <% if item.image_url.present? %>
-                                    <a href="<%= item.url %>" style="text-decoration:none;">
-                                      <img src="<%= item.image_url %>" alt="<%= item.caption %>" width="280" style="display:block;width:100%;max-width:280px;height:auto;border:0;" />
-                                    </a>
-                                  <% else %>
-                                    <p style="margin:24px 12px;font-family:Georgia,serif;color:#7a6e62;text-align:center;">Нет превью</p>
-                                  <% end %>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td style="padding:10px 12px 12px 12px;font-family:Georgia,'Times New Roman',serif;">
-                                  <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:14px;"><%= item.caption %></a>
-                                  <p style="margin:4px 0 0 0;font-size:12px;color:#7a6e62;">
-                                    <%= item.action == 'create' ? 'Добавлено' : 'Обновлено' %>
-                                    · <%= AdminDigest::Format.datetime(item.occurred_at) %>
-                                    <% if item.actor_email.present? %><br /><%= item.actor_email %><% end %>
-                                  </p>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        <% end %>
-                        <% if row_items.size == 1 %>
-                          <td width="50%" style="padding:0 0 12px 6px;"></td>
-                        <% end %>
-                      </tr>
-                    <% end %>
-                  </table>
-                <% end %>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <% payload.photos.each_slice(2) do |row_items| %>
+                    <tr>
+                      <% row_items.each do |item| %>
+                        <td width="50%" valign="top" style="padding:0 6px 12px 0;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #e6dcc8;">
+                            <tr>
+                              <td style="padding:0;background-color:#efe6d8;">
+                                <% if item.image_url.present? %>
+                                  <a href="<%= item.url %>" style="text-decoration:none;">
+                                    <img src="<%= item.image_url %>" alt="<%= item.caption %>" width="280" style="display:block;width:100%;max-width:280px;height:auto;border:0;" />
+                                  </a>
+                                <% else %>
+                                  <p style="margin:24px 12px;font-family:Georgia,serif;color:#7a6e62;text-align:center;">Нет превью</p>
+                                <% end %>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding:10px 12px 12px 12px;font-family:Georgia,'Times New Roman',serif;">
+                                <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:14px;"><%= item.caption %></a>
+                                <p style="margin:4px 0 0 0;font-size:12px;color:#7a6e62;">
+                                  <%= item.action == 'create' ? 'Добавлено' : 'Обновлено' %>
+                                  · <%= AdminDigest::Format.datetime(item.occurred_at) %>
+                                  <% if item.actor_email.present? %><br /><%= item.actor_email %><% end %>
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      <% end %>
+                      <% if row_items.size == 1 %>
+                        <td width="50%" style="padding:0 0 12px 6px;"></td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                </table>
               </td>
             </tr>
+            <% end %>
 
+            <% unless payload.photo_tags.empty? %>
             <tr>
               <td style="padding:0 32px 8px 32px;">
                 <%= render 'digest_mailer/section_title', title: 'Отметки на фото', subtitle: 'кто появился на снимках', accent: '#6a4a7a' %>
@@ -217,31 +210,29 @@
             </tr>
             <tr>
               <td style="padding:0 32px 24px 32px;">
-                <% if payload.photo_tags.empty? %>
-                  <%= render 'digest_mailer/empty_note', text: 'Новых отметок на фото за месяц не было.' %>
-                <% else %>
-                  <% payload.photo_tags.each do |item| %>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;border-bottom:1px solid #eee4d6;">
-                      <tr>
-                        <td width="56" valign="top" style="padding:8px 8px 8px 0;">
-                          <%= render 'digest_mailer/thumb', url: item.image_url, alt: item.photo_caption, fallback: 'Ф', size: 48 %>
-                        </td>
-                        <td valign="middle" style="padding:8px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;font-size:14px;">
-                          <a href="<%= item.person_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.person_name %></a>
-                          <%= item.action == 'create' ? 'отмечен(а) на фото' : '— обновлена отметка на фото' %>
-                          «<a href="<%= item.photo_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.photo_caption %></a>»
-                          <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
-                            <%= AdminDigest::Format.datetime(item.occurred_at) %>
-                            <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  <% end %>
+                <% payload.photo_tags.each do |item| %>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0;border-bottom:1px solid #eee4d6;">
+                    <tr>
+                      <td width="56" valign="top" style="padding:8px 8px 8px 0;">
+                        <%= render 'digest_mailer/thumb', url: item.image_url, alt: item.photo_caption, fallback: 'Ф', size: 48 %>
+                      </td>
+                      <td valign="middle" style="padding:8px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;font-size:14px;">
+                        <a href="<%= item.person_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.person_name %></a>
+                        <%= item.action == 'create' ? 'отмечен(а) на фото' : '— обновлена отметка на фото' %>
+                        «<a href="<%= item.photo_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.photo_caption %></a>»
+                        <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
+                          <%= AdminDigest::Format.datetime(item.occurred_at) %>
+                          <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
                 <% end %>
               </td>
             </tr>
+            <% end %>
 
+            <% unless payload.facts.empty? %>
             <tr>
               <td style="padding:0 32px 8px 32px;">
                 <%= render 'digest_mailer/section_title', title: 'Факты', subtitle: 'новые записи о родственниках', accent: '#3c5f73' %>
@@ -249,34 +240,31 @@
             </tr>
             <tr>
               <td style="padding:0 32px 28px 32px;">
-                <% if payload.facts.empty? %>
-                  <%= render 'digest_mailer/empty_note', text: 'Новых фактов за месяц не было.' %>
-                <% else %>
-                  <% payload.facts.each do |item| %>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px 0;background-color:#f4f7f8;border:1px solid #d7e1e6;">
-                      <tr>
-                        <td style="padding:12px 14px;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
-                          <p style="margin:0 0 6px 0;font-size:13px;color:#7a6e62;">
-                            <%= item.action == 'create' ? 'Новый факт' : 'Факт обновлён' %>
-                            о
-                            <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.person_name %></a>
-                          </p>
-                          <p style="margin:0;font-size:15px;line-height:1.45;">«<%= item.body %>»</p>
-                          <p style="margin:8px 0 0 0;font-size:12px;color:#7a6e62;">
-                            <%= AdminDigest::Format.datetime(item.occurred_at) %>
-                            <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  <% end %>
+                <% payload.facts.each do |item| %>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px 0;background-color:#f4f7f8;border:1px solid #d7e1e6;">
+                    <tr>
+                      <td style="padding:12px 14px;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
+                        <p style="margin:0 0 6px 0;font-size:13px;color:#7a6e62;">
+                          <%= item.action == 'create' ? 'Новый факт' : 'Факт обновлён' %>
+                          о
+                          <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.person_name %></a>
+                        </p>
+                        <p style="margin:0;font-size:15px;line-height:1.45;">«<%= item.body %>»</p>
+                        <p style="margin:8px 0 0 0;font-size:12px;color:#7a6e62;">
+                          <%= AdminDigest::Format.datetime(item.occurred_at) %>
+                          <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
                 <% end %>
               </td>
             </tr>
+            <% end %>
 
             <tr>
               <td style="background-color:#f3eadc;padding:18px 32px;border-top:1px solid #e0d3bf;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.5;color:#7a6e62;">
-                Письмо получают только администраторы.
+                Ежемесячная рассылка семейной хроники.
                 <a href="<%= payload.frontend_base %>" style="color:#8b3a2a;">Открыть хронику</a>
               </td>
             </tr>

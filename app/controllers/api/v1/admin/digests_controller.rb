@@ -8,7 +8,7 @@ module Api
 
         def create
           authorize! :send, :admin_digest
-          result = AdminDigest::Sender.call
+          result = AdminDigest::Sender.call(recipients: [current_user])
           payload = result.payload
           render json: {
             sent: result.sent,

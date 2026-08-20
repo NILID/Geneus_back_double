@@ -33,6 +33,13 @@ class User < ApplicationRecord
   validate :linked_person_must_exist
   validate :password_must_meet_complexity_requirements, if: -> { password.present? }
 
+  # Принявшие приглашение или созданные без invite (не «висящие» инвайты).
+  scope :digest_recipients, lambda {
+    where.not(email: [nil, ''])
+         .where('invitation_token IS NULL OR invitation_accepted_at IS NOT NULL')
+         .order(:email)
+  }
+
   def auth_json
     { id: id, email: email, person_id: person_id, role: role }
   end

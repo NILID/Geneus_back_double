@@ -7,7 +7,7 @@ set :output, 'log/cron.log'
 set :environment, ENV.fetch('RAILS_ENV', 'production')
 set :chronic_options, hours24: true
 
-# Hourly while testing delivery. Switch to `every 1.month` (or `:monthly`) later.
-every 1.hour do
-  rake 'geneus:send_admin_digest'
+# 1-е число каждого месяца, 09:00 по часовому поясу сервера.
+every '0 9 1 * *' do
+  rake 'geneus:send_monthly_digest'
 end

@@ -12,6 +12,9 @@ RSpec.describe DigestMailer, type: :mailer do
     expect(mail.subject).to include('Семейная хроника: дайджест')
     expect(mail.html_part.body.decoded).to include('Дайджест обновлений')
     expect(mail.html_part.body.decoded).to include('Дни рождения')
+    expect(mail.html_part.body.decoded).not_to include('на ближайший месяц')
+    expect(mail.html_part.body.decoded).not_to include('добавлены за месяц')
     expect(mail.text_part.body.decoded).to include('Семейная хроника — дайджест')
+    expect(mail.text_part.body.decoded).not_to include('== Дни рождения ==')
   end
 end

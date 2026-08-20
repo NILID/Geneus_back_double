@@ -4,25 +4,36 @@ module AdminDigest
   class Sender
     Result = Struct.new(:sent, :recipients, :payload, keyword_init: true)
 
-    def self.call(now: Time.current)
-      new(now: now).call
+    def self.call(now: Time.current, recipients: nil)
+      new(now: now, recipients: recipients).call
     end
 
-    def initialize(now: Time.current)
+    def initialize(now: Time.current, recipients: nil)
       @now = now
+      @recipients = recipients
     end
 
     def call
       payload = Builder.call(now: @now)
-      recipients = User.where(role: 'admin').order(:email).to_a
-      recipients.each do |admin|
-        DigestMailer.monthly(admin, payload).deliver_now
+      list = recipient_list
+      list.each do |user|
+        DigestMailer.monthly(user, payload).deliver_now
       end
       Result.new(
-        sent: recipients.size,
-        recipients: recipients.map(&:email),
+        sent: list.size,
+        recipients: list.map(&:email),
         payload: payload
       )
+    end
+
+    private
+
+    def recipient_list
+      if @recipients.nil?
+        User.digest_recipients.to_a
+      else
+        Array(@recipients)
+      end
     end
   end
 end
