@@ -26,5 +26,13 @@ module Geneus
 
       request.base_url + path
     end
+
+    # Абсолютный URL без request (письма, cron).
+    def absolute_url(attached)
+      relative = path(attached)
+      return nil if relative.blank?
+
+      Geneus::AppUrls.backend_base + relative
+    end
   end
 end

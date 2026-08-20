@@ -20,4 +20,12 @@ RSpec.describe Geneus::BlobPublicPath do
       expect(path).not_to include('/blobs/redirect/')
     end
   end
+
+  describe '.absolute_url' do
+    it 'prefixes the proxy path with the mailer backend host' do
+      url = described_class.absolute_url(person.avatar)
+      expect(url).to include('/rails/active_storage/blobs/proxy/')
+    expect(url).to match(%r{\Ahttps?://})
+    end
+  end
 end

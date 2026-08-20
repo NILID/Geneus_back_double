@@ -1,0 +1,75 @@
+<% payload = @payload %>
+Семейная хроника — дайджест
+<%= AdminDigest::Format.date(payload.period.from) %> — <%= AdminDigest::Format.date(payload.period.to) %>
+
+Дни рождения: <%= payload.counts.birthdays %>
+Новые персоны: <%= payload.counts.new_people %>
+Изменения персон: <%= payload.counts.updated_people %>
+Фото: <%= payload.counts.photos %>
+Отметки: <%= payload.counts.photo_tags %>
+Факты: <%= payload.counts.facts %>
+
+== Дни рождения ==
+<% if payload.birthdays.empty? %>
+В ближайший месяц дней рождения нет.
+<% else %>
+<% payload.birthdays.each do |item| %>
+- <%= item.name %>, <%= AdminDigest::Format.date(item.occurrence_date) %>, исполнится <%= AdminDigest::Format.years(item.age) %>
+  <%= item.url %>
+<% end %>
+<% end %>
+
+== Новые персоны ==
+<% if payload.new_people.empty? %>
+Новых персон за месяц не было.
+<% else %>
+<% payload.new_people.each do |item| %>
+- <%= item.name %> (<%= AdminDigest::Format.datetime(item.occurred_at) %><% if item.actor_email.present? %>, <%= item.actor_email %><% end %>)
+  <%= item.url %>
+<% end %>
+<% end %>
+
+== Изменения персон ==
+<% if payload.updated_people.empty? %>
+Изменений карточек за месяц не было.
+<% else %>
+<% payload.updated_people.each do |item| %>
+- <%= item.name %> (<%= AdminDigest::Format.datetime(item.occurred_at) %><% if item.actor_email.present? %>, <%= item.actor_email %><% end %>)
+<% item.changes.each do |change| %>
+  <%= change.label %>: <%= change.old_value %> → <%= change.new_value %>
+<% end %>
+  <%= item.url %>
+<% end %>
+<% end %>
+
+== Фотографии ==
+<% if payload.photos.empty? %>
+Новых или изменённых фото за месяц не было.
+<% else %>
+<% payload.photos.each do |item| %>
+- <%= item.caption %> (<%= item.action == 'create' ? 'добавлено' : 'обновлено' %>, <%= AdminDigest::Format.datetime(item.occurred_at) %>)
+  <%= item.url %>
+<% end %>
+<% end %>
+
+== Отметки на фото ==
+<% if payload.photo_tags.empty? %>
+Новых отметок на фото за месяц не было.
+<% else %>
+<% payload.photo_tags.each do |item| %>
+- <%= item.person_name %> на фото «<%= item.photo_caption %>»
+  <%= item.person_url %>
+<% end %>
+<% end %>
+
+== Факты ==
+<% if payload.facts.empty? %>
+Новых фактов за месяц не было.
+<% else %>
+<% payload.facts.each do |item| %>
+- <%= item.person_name %>: <%= item.body %>
+  <%= item.url %>
+<% end %>
+<% end %>
+
+<%= payload.frontend_base %>

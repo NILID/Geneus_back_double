@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       get 'home/stats', to: 'home#stats'
       namespace :admin do
         resources :users, only: %i[index update]
+        resource :digest, only: :create
       end
       get 'audits/filter_options', to: 'audits#filter_options'
       resources :audits, only: [:index]

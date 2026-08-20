@@ -44,5 +44,6 @@ class Ability
     can :read, Audited::Audit
     can :read, User
     can :update_role, User
+    can :send, :admin_digest
   end
 end

@@ -1,0 +1,8 @@
+<% size = local_assigns.fetch(:size, 56) %>
+<% if url.present? %>
+  <img src="<%= url %>" alt="<%= alt %>" width="<%= size %>" height="<%= size %>" style="display:block;width:<%= size %>px;height:<%= size %>px;border:0;border-radius:6px;object-fit:cover;background-color:#efe6d8;" />
+<% else %>
+  <div style="width:<%= size %>px;height:<%= size %>px;border-radius:6px;background-color:#c4a35a;color:#fffaf3;font-family:Georgia,'Times New Roman',serif;font-size:<%= size > 50 ? 22 : 18 %>px;line-height:<%= size %>px;text-align:center;">
+    <%= (fallback.presence || '•').to_s.first.upcase %>
+  </div>
+<% end %>

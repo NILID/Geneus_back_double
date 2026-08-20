@@ -6,22 +6,31 @@ class PersonUpcomingBirthdays
 
   Row = Struct.new(:person, :days_offset, :occurrence_date, :age, :deceased, keyword_init: true)
 
-  def self.call(reference_date: Date.current)
-    new(reference_date: reference_date).call
+  def self.call(reference_date: Date.current, days_past: DAYS_PAST, days_future: DAYS_FUTURE, living_only: false)
+    new(
+      reference_date: reference_date,
+      days_past: days_past,
+      days_future: days_future,
+      living_only: living_only
+    ).call
   end
 
-  def initialize(reference_date: Date.current)
+  def initialize(reference_date: Date.current, days_past: DAYS_PAST, days_future: DAYS_FUTURE, living_only: false)
     @today = reference_date
+    @days_past = days_past
+    @days_future = days_future
+    @living_only = living_only
   end
 
   def call
-    offsets = (-DAYS_PAST..DAYS_FUTURE)
+    offsets = (-@days_past..@days_future)
     target_by_offset = offsets.index_with { |offset| @today + offset }
 
     scope = Person
             .where.not(date_of_birth: nil)
             .where(birth_date_year_only: false)
             .includes(avatar_attachment: :blob)
+    scope = scope.where(date_of_death: nil) if @living_only
 
     rows = []
     scope.find_each do |person|
