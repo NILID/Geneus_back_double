@@ -16,15 +16,14 @@ module AdminDigest
       'date_of_death' => 'Дата смерти',
       'location_of_birth' => 'Место рождения',
       'location_of_death' => 'Место смерти',
-      'birth_latitude' => 'Широта рождения',
-      'birth_longitude' => 'Долгота рождения',
-      'death_latitude' => 'Широта смерти',
-      'death_longitude' => 'Долгота смерти',
       'birth_date_year_only' => 'В дате рождения только год',
       'death_date_year_only' => 'В дате смерти только год'
     }.freeze
 
-    SKIP_PERSON_FIELDS = %w[chart_id created_at updated_at].freeze
+    SKIP_PERSON_FIELDS = %w[
+      chart_id created_at updated_at
+      birth_latitude birth_longitude death_latitude death_longitude
+    ].freeze
 
     class << self
       def date(value)

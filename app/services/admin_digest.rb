@@ -3,7 +3,6 @@
 module AdminDigest
   AUDITABLE_TYPES = %w[Person GalleryPhoto GalleryPhotoPersonTag PersonFact].freeze
   LOOKBACK = 1.month
-  PHOTO_UPDATE_FIELDS = %w[caption taken_year].freeze
 
   Period = Struct.new(:from, :to, keyword_init: true)
   Counts = Struct.new(

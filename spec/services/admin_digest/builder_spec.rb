@@ -99,6 +99,64 @@ RSpec.describe AdminDigest::Builder do
     end
   end
 
+  it 'includes only uploaded photos, not caption or year updates' do
+    travel_to Time.zone.parse('2026-08-20 12:00:00') do
+      Audited.store[:audited_user] = actor
+      begin
+        create(:gallery_photo, user: actor, caption: 'New scan')
+        updated = create(:gallery_photo, user: actor, caption: 'Old caption', taken_year: 1990)
+        updated.update!(caption: 'New caption', taken_year: 1991)
+      ensure
+        Audited.store[:audited_user] = nil
+      end
+
+      photos = described_class.call.photos
+      captions = photos.map(&:caption)
+      expect(captions).to include('New scan', 'New caption')
+      expect(captions.count { |c| c == 'New caption' }).to eq(1)
+      expect(photos.map(&:action).uniq).to eq(['create'])
+    end
+  end
+
+  it 'omits birth and death coordinates from person change diffs' do
+    travel_to Time.zone.parse('2026-08-20 12:00:00') do
+      person = living_person(first_name: 'Map', last_name: 'Pin', location_of_birth: 'Москва')
+      Audited.store[:audited_user] = actor
+      begin
+        person.update!(
+          last_name: 'Moved',
+          location_of_birth: 'Петербург',
+          birth_latitude: 59.93,
+          birth_longitude: 30.33,
+          death_latitude: 55.75,
+          death_longitude: 37.61
+        )
+      ensure
+        Audited.store[:audited_user] = nil
+      end
+
+      update = described_class.call.updated_people.find { |item| item.name == 'Map Moved' }
+      expect(update).to be_present
+      labels = update.changes.map(&:label)
+      expect(labels).to include('Фамилия', 'Место рождения')
+      expect(labels).not_to include('Широта рождения', 'Долгота рождения', 'Широта смерти', 'Долгота смерти')
+    end
+  end
+
+  it 'does not list a person update that only changed coordinates' do
+    travel_to Time.zone.parse('2026-08-20 12:00:00') do
+      person = living_person(first_name: 'Only', last_name: 'Coords')
+      Audited.store[:audited_user] = actor
+      begin
+        person.update!(birth_latitude: 59.93, birth_longitude: 30.33)
+      ensure
+        Audited.store[:audited_user] = nil
+      end
+
+      expect(described_class.call.updated_people.map(&:name)).not_to include('Only Coords')
+    end
+  end
+
   it 'does not include updates older than a month' do
     travel_to Time.zone.parse('2026-06-01 12:00:00') do
       living_person(first_name: 'Ancient', last_name: 'Record')

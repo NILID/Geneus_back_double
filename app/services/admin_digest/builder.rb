@@ -160,9 +160,7 @@ module AdminDigest
 
     def photo_items(audits, photos_by_id, users_by_id)
       audits.filter_map do |audit|
-        next unless audit.auditable_type == 'GalleryPhoto'
-        next unless %w[create update].include?(audit.action)
-        next unless photo_event_relevant?(audit)
+        next unless audit.auditable_type == 'GalleryPhoto' && audit.action == 'create'
 
         photo = photos_by_id[audit.auditable_id]
         next if photo.blank?
@@ -224,15 +222,6 @@ module AdminDigest
           action: audit.action
         )
       end
-    end
-
-    def photo_event_relevant?(audit)
-      return true if audit.action == 'create'
-
-      hash = audit.audited_changes
-      return false unless hash.is_a?(Hash)
-
-      (hash.stringify_keys.keys & PHOTO_UPDATE_FIELDS).any?
     end
   end
 end
