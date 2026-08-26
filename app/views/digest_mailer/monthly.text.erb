@@ -39,7 +39,7 @@
 
 == Фотографии ==
 <% payload.photos.each do |item| %>
-- <%= item.caption %> (<%= item.action == 'create' ? 'добавлено' : 'обновлено' %>, <%= AdminDigest::Format.datetime(item.occurred_at) %>)
+- <% if item.caption.present? %><%= item.caption %> <% end %>(<%= item.action == 'create' ? 'добавлено' : 'обновлено' %>, <%= AdminDigest::Format.datetime(item.occurred_at) %>)
   <%= item.url %>
 <% end %>
 <% end %>
@@ -47,7 +47,7 @@
 
 == Отметки на фото ==
 <% payload.photo_tags.each do |item| %>
-- «<%= item.photo_caption %>»: <%= item.people.map(&:name).join(', ') %>
+- <% if item.photo_caption.present? %>«<%= item.photo_caption %>»: <% end %><%= item.people.map(&:name).join(', ') %>
   <%= item.photo_url %>
 <% end %>
 <% end %>

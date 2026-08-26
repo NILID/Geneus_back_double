@@ -17,4 +17,18 @@ RSpec.describe DigestMailer, type: :mailer do
     expect(mail.text_part.body.decoded).to include('Семейная хроника — дайджест')
     expect(mail.text_part.body.decoded).not_to include('== Дни рождения ==')
   end
+
+  it 'does not render a caption placeholder when a photo has none' do
+    admin = create(:user, :admin, email: "digest-#{SecureRandom.hex(4)}@example.com")
+    Audited.store[:audited_user] = admin
+    begin
+      create(:gallery_photo, user: admin, caption: '')
+    ensure
+      Audited.store[:audited_user] = nil
+    end
+
+    mail = described_class.monthly(admin, AdminDigest::Builder.call)
+    expect(mail.html_part.body.decoded).not_to include('Без подписи')
+    expect(mail.text_part.body.decoded).not_to include('Без подписи')
+  end
 end

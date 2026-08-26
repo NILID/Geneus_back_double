@@ -15,14 +15,13 @@ module AdminDigest
       'date_of_birth' => 'Дата рождения',
       'date_of_death' => 'Дата смерти',
       'location_of_birth' => 'Место рождения',
-      'location_of_death' => 'Место смерти',
-      'birth_date_year_only' => 'В дате рождения только год',
-      'death_date_year_only' => 'В дате смерти только год'
+      'location_of_death' => 'Место смерти'
     }.freeze
 
     SKIP_PERSON_FIELDS = %w[
       chart_id created_at updated_at
       birth_latitude birth_longitude death_latitude death_longitude
+      birth_date_year_only death_date_year_only
     ].freeze
 
     class << self
@@ -62,7 +61,7 @@ module AdminDigest
 
       def photo_caption(photo)
         cap = photo&.caption.to_s.strip
-        cap.present? ? cap : 'Без подписи'
+        cap.presence
       end
 
       def display_value(field, raw)
@@ -73,8 +72,6 @@ module AdminDigest
           gender_label(raw)
         when 'date_of_birth', 'date_of_death'
           date(raw)
-        when 'birth_date_year_only', 'death_date_year_only'
-          boolean_label(raw)
         when 'bio'
           raw.to_s.strip.truncate(280)
         else
@@ -133,10 +130,6 @@ module AdminDigest
         when 'female' then 'женский'
         else raw.to_s
         end
-      end
-
-      def boolean_label(raw)
-        ActiveModel::Type::Boolean.new.cast(raw) ? 'да' : 'нет'
       end
 
       def year_word(n)
