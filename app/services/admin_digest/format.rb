@@ -29,7 +29,14 @@ module AdminDigest
         d = coerce_date(value)
         return '—' if d.blank?
 
-        "#{d.day} #{MONTHS[d.month - 1]} #{d.year}"
+        "#{day_month(d)} #{d.year}"
+      end
+
+      def day_month(value)
+        d = coerce_date(value)
+        return '—' if d.blank?
+
+        "#{d.day} #{MONTHS[d.month - 1]}"
       end
 
       def datetime(value)

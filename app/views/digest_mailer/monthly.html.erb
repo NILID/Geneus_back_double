@@ -74,7 +74,7 @@
                       <td valign="middle" style="padding:10px 12px 10px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;">
                         <a href="<%= item.url %>" style="color:#8b3a2a;text-decoration:none;font-size:16px;"><%= item.name %></a>
                         <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
-                          <%= AdminDigest::Format.date(item.occurrence_date) %>
+                          <%= AdminDigest::Format.day_month(item.occurrence_date) %>
                           · <%= item.days_offset.zero? ? 'сегодня' : (item.days_offset == 1 ? 'завтра' : "через #{AdminDigest::Format.days_after(item.days_offset)}") %>
                           · исполнится <%= AdminDigest::Format.years(item.age) %>
                         </p>

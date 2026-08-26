@@ -12,7 +12,7 @@
 
 == Дни рождения ==
 <% payload.birthdays.each do |item| %>
-- <%= item.name %>, <%= AdminDigest::Format.date(item.occurrence_date) %>, исполнится <%= AdminDigest::Format.years(item.age) %>
+- <%= item.name %>, <%= AdminDigest::Format.day_month(item.occurrence_date) %>, исполнится <%= AdminDigest::Format.years(item.age) %>
   <%= item.url %>
 <% end %>
 <% end %>
