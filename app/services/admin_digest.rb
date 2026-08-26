@@ -66,15 +66,12 @@ module AdminDigest
     :action,
     keyword_init: true
   )
+  PhotoTagPerson = Struct.new(:name, :url, keyword_init: true)
   PhotoTagItem = Struct.new(
-    :person_name,
     :photo_caption,
-    :occurred_at,
-    :person_url,
     :photo_url,
     :image_url,
-    :actor_email,
-    :action,
+    :people,
     keyword_init: true
   )
   FactItem = Struct.new(

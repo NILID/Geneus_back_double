@@ -217,12 +217,11 @@
                         <%= render 'digest_mailer/thumb', url: item.image_url, alt: item.photo_caption, fallback: 'Ф', size: 48 %>
                       </td>
                       <td valign="middle" style="padding:8px 0;font-family:Georgia,'Times New Roman',serif;color:#2c241c;font-size:14px;">
-                        <a href="<%= item.person_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.person_name %></a>
-                        <%= item.action == 'create' ? 'отмечен(а) на фото' : '— обновлена отметка на фото' %>
-                        «<a href="<%= item.photo_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.photo_caption %></a>»
-                        <p style="margin:4px 0 0 0;font-size:13px;color:#7a6e62;">
-                          <%= AdminDigest::Format.datetime(item.occurred_at) %>
-                          <% if item.actor_email.present? %> · <%= item.actor_email %><% end %>
+                        <a href="<%= item.photo_url %>" style="color:#8b3a2a;text-decoration:none;"><%= item.photo_caption %></a>
+                        <p style="margin:4px 0 0 0;font-size:13px;line-height:1.45;color:#2c241c;">
+                          <% item.people.each_with_index do |person, index| %>
+                            <%= ', ' if index.positive? %><a href="<%= person.url %>" style="color:#8b3a2a;text-decoration:none;"><%= person.name %></a>
+                          <% end %>
                         </p>
                       </td>
                     </tr>

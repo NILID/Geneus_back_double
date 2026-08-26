@@ -47,8 +47,8 @@
 
 == Отметки на фото ==
 <% payload.photo_tags.each do |item| %>
-- <%= item.person_name %> на фото «<%= item.photo_caption %>»
-  <%= item.person_url %>
+- «<%= item.photo_caption %>»: <%= item.people.map(&:name).join(', ') %>
+  <%= item.photo_url %>
 <% end %>
 <% end %>
 <% unless payload.facts.empty? %>

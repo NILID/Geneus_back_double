@@ -81,7 +81,7 @@ RSpec.describe AdminDigest::Builder do
       expect(payload.photos.map(&:caption)).to include('Family picnic')
       expect(payload.photos.first.image_url).to include('/rails/active_storage/blobs/proxy/')
 
-      expect(payload.photo_tags.map(&:person_name)).to include('New Relative')
+      expect(payload.photo_tags.flat_map { |item| item.people.map(&:name) }).to include('New Relative')
       expect(payload.facts.map(&:body)).to include('Любил чай.')
 
       birthday_names = payload.birthdays.map(&:name)
@@ -154,6 +154,35 @@ RSpec.describe AdminDigest::Builder do
       end
 
       expect(described_class.call.updated_people.map(&:name)).not_to include('Only Coords')
+    end
+  end
+
+  it 'groups photo tags by photo and lists tagged people without dates' do
+    travel_to Time.zone.parse('2026-08-20 12:00:00') do
+      anna = living_person(first_name: 'Anna', last_name: 'Tagged')
+      boris = living_person(first_name: 'Boris', last_name: 'Tagged')
+      clara = living_person(first_name: 'Clara', last_name: 'Tagged')
+      picnic = nil
+      portrait = nil
+      Audited.store[:audited_user] = actor
+      begin
+        picnic = create(:gallery_photo, user: actor, caption: 'Picnic')
+        portrait = create(:gallery_photo, user: actor, caption: 'Portrait')
+        picnic.gallery_photo_person_tags.create!(person: anna)
+        picnic.gallery_photo_person_tags.create!(person: boris)
+        portrait.gallery_photo_person_tags.create!(person: clara)
+      ensure
+        Audited.store[:audited_user] = nil
+      end
+
+      items = described_class.call.photo_tags
+      expect(items.size).to eq(2)
+
+      picnic_item = items.find { |item| item.photo_caption == 'Picnic' }
+      expect(picnic_item.people.map(&:name)).to eq(['Anna Tagged', 'Boris Tagged'])
+
+      portrait_item = items.find { |item| item.photo_caption == 'Portrait' }
+      expect(portrait_item.people.map(&:name)).to eq(['Clara Tagged'])
     end
   end
 

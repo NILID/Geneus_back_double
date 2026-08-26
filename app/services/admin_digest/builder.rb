@@ -21,7 +21,7 @@ module AdminDigest
       new_people = person_create_items(audits, people_by_id, users_by_id)
       updated_people = person_update_items(audits, people_by_id, users_by_id)
       photos = photo_items(audits, photos_by_id, users_by_id)
-      photo_tags = photo_tag_items(audits, tags_by_id, users_by_id)
+      photo_tags = photo_tag_items(audits, tags_by_id)
       facts = fact_items(audits, facts_by_id, users_by_id)
 
       Payload.new(
@@ -177,10 +177,11 @@ module AdminDigest
       end
     end
 
-    def photo_tag_items(audits, tags_by_id, users_by_id)
-      audits.filter_map do |audit|
-        next unless audit.auditable_type == 'GalleryPhotoPersonTag'
-        next unless %w[create update].include?(audit.action)
+    def photo_tag_items(audits, tags_by_id)
+      grouped = {}
+
+      audits.each do |audit|
+        next unless audit.auditable_type == 'GalleryPhotoPersonTag' && audit.action == 'create'
 
         tag = tags_by_id[audit.auditable_id]
         next if tag.blank?
@@ -189,15 +190,21 @@ module AdminDigest
         photo = tag.gallery_photo
         next if person.blank? || photo.blank?
 
+        bucket = grouped[photo.id] ||= { photo: photo, people: {} }
+        bucket[:people][person.id] ||= PhotoTagPerson.new(
+          name: Format.person_name(person),
+          url: Geneus::AppUrls.person_url(person)
+        )
+      end
+
+      grouped.values.map do |bucket|
+        photo = bucket[:photo]
+        people = bucket[:people].values.sort_by { |item| item.name.to_s.downcase }
         PhotoTagItem.new(
-          person_name: Format.person_name(person),
           photo_caption: Format.photo_caption(photo),
-          occurred_at: audit.created_at,
-          person_url: Geneus::AppUrls.person_url(person),
           photo_url: Geneus::AppUrls.media_url,
           image_url: Geneus::BlobPublicPath.absolute_url(photo.image),
-          actor_email: users_by_id[audit.user_id]&.email,
-          action: audit.action
+          people: people
         )
       end
     end
