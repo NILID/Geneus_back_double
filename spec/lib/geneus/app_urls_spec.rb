@@ -19,6 +19,8 @@ RSpec.describe Geneus::AppUrls do
     expect(described_class.frontend_base).to eq('https://tree.example.test')
     expect(described_class.person_url(person)).to eq('https://tree.example.test/person/abc')
     expect(described_class.media_url).to eq('https://tree.example.test/media')
+    photo = create(:gallery_photo)
+    expect(described_class.media_url(photo)).to eq("https://tree.example.test/media/#{photo.id}")
     expect(described_class.backend_base).to eq('https://api.example.test')
   end
 end

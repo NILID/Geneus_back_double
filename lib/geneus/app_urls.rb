@@ -38,8 +38,10 @@ module Geneus
       "#{person_url(person)}/facts"
     end
 
-    def media_url
-      "#{frontend_base}/media"
+    def media_url(photo = nil)
+      return "#{frontend_base}/media" if photo.blank?
+
+      "#{frontend_base}/media/#{photo.id}"
     end
   end
 end

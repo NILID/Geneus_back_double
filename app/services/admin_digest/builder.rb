@@ -169,7 +169,7 @@ module AdminDigest
           photo: photo,
           caption: Format.photo_caption(photo),
           occurred_at: audit.created_at,
-          url: Geneus::AppUrls.media_url,
+          url: Geneus::AppUrls.media_url(photo),
           image_url: Geneus::BlobPublicPath.absolute_url(photo.image),
           actor_email: users_by_id[audit.user_id]&.email,
           action: audit.action
@@ -202,7 +202,7 @@ module AdminDigest
         people = bucket[:people].values.sort_by { |item| item.name.to_s.downcase }
         PhotoTagItem.new(
           photo_caption: Format.photo_caption(photo),
-          photo_url: Geneus::AppUrls.media_url,
+          photo_url: Geneus::AppUrls.media_url(photo),
           image_url: Geneus::BlobPublicPath.absolute_url(photo.image),
           people: people
         )

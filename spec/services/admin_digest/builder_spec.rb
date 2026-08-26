@@ -80,6 +80,8 @@ RSpec.describe AdminDigest::Builder do
 
       expect(payload.photos.map(&:caption)).to include('Family picnic')
       expect(payload.photos.first.image_url).to include('/rails/active_storage/blobs/proxy/')
+      expect(payload.photos.first.url).to eq(Geneus::AppUrls.media_url(photo))
+      expect(payload.photo_tags.first.photo_url).to eq(Geneus::AppUrls.media_url(photo))
 
       expect(payload.photo_tags.flat_map { |item| item.people.map(&:name) }).to include('New Relative')
       expect(payload.facts.map(&:body)).to include('Любил чай.')

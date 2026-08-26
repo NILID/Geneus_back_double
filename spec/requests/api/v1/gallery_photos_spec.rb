@@ -59,6 +59,34 @@ RSpec.describe 'Api::V1::GalleryPhotos', type: :request do
     end
   end
 
+  describe 'GET /api/v1/gallery_photos/:id' do
+    it 'returns 401 without token' do
+      photo = create(:gallery_photo, user: user)
+      get api_v1_gallery_photo_path(photo)
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns one photo with image_url and tags' do
+      photo = create(:gallery_photo, user: user, caption: 'Solo')
+      photo.gallery_photo_person_tags.create!(person: tag_person)
+      get api_v1_gallery_photo_path(photo), headers: { 'Authorization' => "Bearer #{bearer_token}" }
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      gp = json['gallery_photo']
+      expect(gp['id']).to eq(photo.id)
+      expect(gp['caption']).to eq('Solo')
+      expect(gp['user_id']).to eq(user.id)
+      expect(gp['image_url']).to be_present
+      expect(gp['tagged_people'].map { |h| h['id'] }).to eq([tag_person.id])
+    end
+
+    it 'returns 404 for a missing photo' do
+      get api_v1_gallery_photo_path(id: 9_999_999), headers: { 'Authorization' => "Bearer #{bearer_token}" }
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'POST /api/v1/gallery_photos' do
     it 'returns 401 without token' do
       png = Rack::Test::UploadedFile.new(

@@ -22,6 +22,16 @@ module Api
         }
       end
 
+      def show
+        photo = GalleryPhoto
+          .includes(:user, gallery_photo_person_tags: :person, image_attachment: :blob)
+          .find(params[:id])
+        authorize! :read, photo
+        render json: {
+          gallery_photo: Api::V1::GalleryPhotoSerializer.new(photo, request: request).as_json
+        }
+      end
+
       def create
         authorize! :create, GalleryPhoto
         permitted = permit_gallery_photo_params
